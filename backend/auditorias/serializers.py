@@ -23,11 +23,11 @@ class UnidadAuditadaSerializer(serializers.ModelSerializer):
         model = UnidadAuditada
         fields = "__all__"
 
-
 class AuditoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Auditoria
         fields = "__all__"
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
 
 class AuditoriaAuditorSerializer(serializers.ModelSerializer):
@@ -40,6 +40,7 @@ class InformeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Informe
         fields = "__all__"
+        read_only_fields = ["creado_por", "fecha_creacion"]
 
 
 class HallazgoSerializer(serializers.ModelSerializer):
@@ -70,6 +71,7 @@ class HistorialCambioSerializer(serializers.ModelSerializer):
     class Meta:
         model = HistorialCambio
         fields = "__all__"
+        read_only_fields = ["usuario", "fecha_cambio"]
 
 
 class PlanMejoramientoSerializer(serializers.ModelSerializer):
@@ -88,12 +90,14 @@ class SeguimientoAccionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SeguimientoAccion
         fields = "__all__"
+        read_only_fields = ["registrado_por"]
 
 
 class DocumentoGeneradoSerializer(serializers.ModelSerializer):
     class Meta:
         model = DocumentoGenerado
         fields = "__all__"
+        read_only_fields = ["generado_por", "fecha_generacion"]
 
 
 class NotificacionAlertaSerializer(serializers.ModelSerializer):

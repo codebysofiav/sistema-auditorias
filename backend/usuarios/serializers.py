@@ -14,9 +14,40 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token["email"] = user.email
-        token["username"] = user.username
         token["roles"] = list(user.groups.values_list("name", flat=True))
         return token
+
+
+class UsuarioCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+    rol = serializers.ChoiceField(
+        choices=["Administrador", "Auditor", "Usuario consulta"],
+        write_only=True,
+    )
+
+    class Meta:
+        model = Usuario
+        fields = (
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "password",
+            "rol",
+        )
+
+    def create(self, validated_data):
+        from django.contrib.auth.models import Group
+
+        rol = validated_data.pop("rol")
+        password = validated_data.pop("password")
+
+        usuario = Usuario.objects.create_user(password=password, **validated_data)
+
+        grupo = Group.objects.get(name=rol)
+        usuario.groups.add(grupo)
+
+        return usuario
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -27,11 +58,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "email",
-            "username",
             "first_name",
             "last_name",
-            "is_staff",
-            "is_superuser",
             "roles",
         )
         read_only_fields = fields

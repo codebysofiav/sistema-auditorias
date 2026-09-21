@@ -2,9 +2,23 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import generics, permissions
+from .models import Usuario
 
-from .serializers import EmailTokenObtainPairSerializer, UsuarioSerializer
 
+from .serializers import EmailTokenObtainPairSerializer, UsuarioCreateSerializer, UsuarioSerializer
+
+class EsAdministrador(permissions.BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return user.is_authenticated and (
+            user.is_superuser or user.groups.filter(name="Administrador").exists()
+        )
+
+class UsuarioCreateView(generics.CreateAPIView):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioCreateSerializer
+    permission_classes = [EsAdministrador]
 
 class LoginView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer

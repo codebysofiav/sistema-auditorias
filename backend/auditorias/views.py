@@ -40,6 +40,7 @@ class AuditoriaAccessMixin:
     permission_classes = [AuditoriaRolePermission]
     admin_write_only = False
     auditoria_active_filter = None
+    autor_field = None
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -80,7 +81,10 @@ class AuditoriaAccessMixin:
         if not self._can_create_for_request():
             raise PermissionDenied("No tiene permiso para crear este recurso.")
 
-        serializer.save()
+        if self.autor_field:
+            serializer.save(**{self.autor_field: self.request.user})
+        else:
+            serializer.save()
 
     def _can_create_for_request(self):
         user = self.request.user
@@ -159,6 +163,7 @@ class UnidadAuditadaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
 class AuditoriaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     queryset = Auditoria.objects.all()
     serializer_class = AuditoriaSerializer
+    autor_field = "creado_por"
 
 
 class AuditoriaAuditorViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
@@ -174,7 +179,7 @@ class InformeViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = Informe.objects.all()
     serializer_class = InformeSerializer
-
+    autor_field = "creado_por"
 
 class HallazgoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
@@ -209,7 +214,7 @@ class HistorialCambioViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = HistorialCambio.objects.all()
     serializer_class = HistorialCambioSerializer
-
+    autor_field = "usuario"
 
 class PlanMejoramientoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
@@ -223,13 +228,14 @@ class AccionMejoramientoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_active_filter = "plan__auditoria__auditoriaauditor__activo"
     queryset = AccionMejoramiento.objects.all()
     serializer_class = AccionMejoramientoSerializer
-
+    autor_field = "registrado_por"
 
 class SeguimientoAccionViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "accion__plan__auditoria__auditoriaauditor__auditor"
     auditoria_active_filter = "accion__plan__auditoria__auditoriaauditor__activo"
     queryset = SeguimientoAccion.objects.all()
     serializer_class = SeguimientoAccionSerializer
+    autor_field = "registrado_por"
 
 
 class DocumentoGeneradoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
@@ -237,6 +243,7 @@ class DocumentoGeneradoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = DocumentoGenerado.objects.all()
     serializer_class = DocumentoGeneradoSerializer
+    autor_field = "generado_por"
 
 
 class NotificacionAlertaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
@@ -244,3 +251,15 @@ class NotificacionAlertaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_active_filter = "accion__plan__auditoria__auditoriaauditor__activo"
     queryset = NotificacionAlerta.objects.all()
     serializer_class = NotificacionAlertaSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+
+        es_admin = user.is_superuser or user.groups.filter(name="Administrador").exists()
+        es_auditor = user.groups.filter(name="Auditor").exists()
+
+        if es_auditor and not es_admin:
+            queryset = queryset.filter(usuario=user)
+
+        return queryset
