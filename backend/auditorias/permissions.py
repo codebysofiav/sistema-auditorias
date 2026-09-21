@@ -1,4 +1,6 @@
 from rest_framework import permissions
+from .models import Auditoria  # agrega este import al inicio del archivo permissions.py
+
 
 
 def user_in_group(user, *group_names):
@@ -6,6 +8,9 @@ def user_in_group(user, *group_names):
 
 
 def get_auditoria_from_object(obj):
+    if isinstance(obj, Auditoria):   # <-- esta línea es la nueva
+        return obj
+
     if hasattr(obj, "auditoria"):
         return obj.auditoria
 

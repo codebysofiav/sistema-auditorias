@@ -39,6 +39,7 @@ from .serializers import (
 class AuditoriaAccessMixin:
     permission_classes = [AuditoriaRolePermission]
     admin_write_only = False
+    auditoria_active_filter = None
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -57,9 +58,15 @@ class AuditoriaAccessMixin:
             return queryset.none()
 
         auditoria_filter = getattr(self, "auditoria_filter", None)
+        auditoria_active_filter = getattr(self, "auditoria_active_filter", None)
 
         if auditoria_filter:
-            return queryset.filter(**{auditoria_filter: user}).distinct()
+            filters = {auditoria_filter: user}
+
+            if auditoria_active_filter:
+                filters[auditoria_active_filter] = True
+
+            return queryset.filter(**filters).distinct()
 
         if self.queryset.model == Auditoria:
             return queryset.filter(auditoriaauditor__auditor=user, auditoriaauditor__activo=True).distinct()
@@ -157,71 +164,83 @@ class AuditoriaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
 class AuditoriaAuditorViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     admin_write_only = True
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = AuditoriaAuditor.objects.all()
     serializer_class = AuditoriaAuditorSerializer
 
 
 class InformeViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = Informe.objects.all()
     serializer_class = InformeSerializer
 
 
 class HallazgoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = Hallazgo.objects.all()
     serializer_class = HallazgoSerializer
 
 
 class PlanAuditoriaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = PlanAuditoria.objects.all()
     serializer_class = PlanAuditoriaSerializer
 
 
 class OportunidadMejoraViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = OportunidadMejora.objects.all()
     serializer_class = OportunidadMejoraSerializer
 
 
 class CronogramaActividadesViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "plan_auditoria__auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "plan_auditoria__auditoria__auditoriaauditor__activo"
     queryset = CronogramaActividades.objects.all()
     serializer_class = CronogramaActividadesSerializer
 
 
 class HistorialCambioViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = HistorialCambio.objects.all()
     serializer_class = HistorialCambioSerializer
 
 
 class PlanMejoramientoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = PlanMejoramiento.objects.all()
     serializer_class = PlanMejoramientoSerializer
 
 
 class AccionMejoramientoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "plan__auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "plan__auditoria__auditoriaauditor__activo"
     queryset = AccionMejoramiento.objects.all()
     serializer_class = AccionMejoramientoSerializer
 
 
 class SeguimientoAccionViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "accion__plan__auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "accion__plan__auditoria__auditoriaauditor__activo"
     queryset = SeguimientoAccion.objects.all()
     serializer_class = SeguimientoAccionSerializer
 
 
 class DocumentoGeneradoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "auditoria__auditoriaauditor__activo"
     queryset = DocumentoGenerado.objects.all()
     serializer_class = DocumentoGeneradoSerializer
 
 
 class NotificacionAlertaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "accion__plan__auditoria__auditoriaauditor__auditor"
+    auditoria_active_filter = "accion__plan__auditoria__auditoriaauditor__activo"
     queryset = NotificacionAlerta.objects.all()
     serializer_class = NotificacionAlertaSerializer
