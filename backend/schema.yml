@@ -1,0 +1,2952 @@
+openapi: 3.0.3
+info:
+  title: Sistema de Auditorías API
+  version: 1.0.0
+  description: API para la gestión de auditorías internas.
+paths:
+  /api/acciones-mejoramiento/:
+    get:
+      operationId: acciones_mejoramiento_list
+      tags:
+      - acciones-mejoramiento
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccionMejoramiento'
+          description: ''
+    post:
+      operationId: acciones_mejoramiento_create
+      tags:
+      - acciones-mejoramiento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccionMejoramiento'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccionMejoramiento'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccionMejoramiento'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccionMejoramiento'
+          description: ''
+  /api/acciones-mejoramiento/{id}/:
+    get:
+      operationId: acciones_mejoramiento_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this accion mejoramiento.
+        required: true
+      tags:
+      - acciones-mejoramiento
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccionMejoramiento'
+          description: ''
+    put:
+      operationId: acciones_mejoramiento_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this accion mejoramiento.
+        required: true
+      tags:
+      - acciones-mejoramiento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccionMejoramiento'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccionMejoramiento'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccionMejoramiento'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccionMejoramiento'
+          description: ''
+    patch:
+      operationId: acciones_mejoramiento_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this accion mejoramiento.
+        required: true
+      tags:
+      - acciones-mejoramiento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAccionMejoramiento'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAccionMejoramiento'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAccionMejoramiento'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccionMejoramiento'
+          description: ''
+    delete:
+      operationId: acciones_mejoramiento_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this accion mejoramiento.
+        required: true
+      tags:
+      - acciones-mejoramiento
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/auditoria-auditores/:
+    get:
+      operationId: auditoria_auditores_list
+      tags:
+      - auditoria-auditores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditoriaAuditor'
+          description: ''
+    post:
+      operationId: auditoria_auditores_create
+      tags:
+      - auditoria-auditores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditoriaAuditor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuditoriaAuditor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuditoriaAuditor'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditoriaAuditor'
+          description: ''
+  /api/auditoria-auditores/{id}/:
+    get:
+      operationId: auditoria_auditores_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this auditoria auditor.
+        required: true
+      tags:
+      - auditoria-auditores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditoriaAuditor'
+          description: ''
+    put:
+      operationId: auditoria_auditores_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this auditoria auditor.
+        required: true
+      tags:
+      - auditoria-auditores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditoriaAuditor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuditoriaAuditor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuditoriaAuditor'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditoriaAuditor'
+          description: ''
+    patch:
+      operationId: auditoria_auditores_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this auditoria auditor.
+        required: true
+      tags:
+      - auditoria-auditores
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAuditoriaAuditor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAuditoriaAuditor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAuditoriaAuditor'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditoriaAuditor'
+          description: ''
+    delete:
+      operationId: auditoria_auditores_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this auditoria auditor.
+        required: true
+      tags:
+      - auditoria-auditores
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/auditorias/:
+    get:
+      operationId: auditorias_list
+      tags:
+      - auditorias
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Auditoria'
+          description: ''
+    post:
+      operationId: auditorias_create
+      tags:
+      - auditorias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auditoria'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Auditoria'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Auditoria'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auditoria'
+          description: ''
+  /api/auditorias/{id}/:
+    get:
+      operationId: auditorias_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this auditoria.
+        required: true
+      tags:
+      - auditorias
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auditoria'
+          description: ''
+    put:
+      operationId: auditorias_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this auditoria.
+        required: true
+      tags:
+      - auditorias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auditoria'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Auditoria'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Auditoria'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auditoria'
+          description: ''
+    patch:
+      operationId: auditorias_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this auditoria.
+        required: true
+      tags:
+      - auditorias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAuditoria'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAuditoria'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAuditoria'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auditoria'
+          description: ''
+    delete:
+      operationId: auditorias_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this auditoria.
+        required: true
+      tags:
+      - auditorias
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailTokenObtainPair'
+          description: ''
+  /api/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      description: Indica al cliente que debe descartar los tokens JWT. La vista no
+        invalida los tokens en el servidor.
+      summary: Cerrar sesión
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Sesión cerrada. El cliente debe descartar los tokens JWT.
+  /api/auth/me/:
+    get:
+      operationId: auth_me_retrieve
+      description: Devuelve la información del usuario que tiene la sesión activa.
+      summary: Obtener usuario autenticado
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+          description: ''
+  /api/auth/refresh/:
+    post:
+      operationId: auth_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/auth/usuarios/crear/:
+    post:
+      operationId: auth_usuarios_crear_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UsuarioCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UsuarioCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioCreate'
+          description: ''
+  /api/cronogramas/:
+    get:
+      operationId: cronogramas_list
+      tags:
+      - cronogramas
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CronogramaActividades'
+          description: ''
+    post:
+      operationId: cronogramas_create
+      tags:
+      - cronogramas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CronogramaActividades'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CronogramaActividades'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CronogramaActividades'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CronogramaActividades'
+          description: ''
+  /api/cronogramas/{id}/:
+    get:
+      operationId: cronogramas_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cronograma actividades.
+        required: true
+      tags:
+      - cronogramas
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CronogramaActividades'
+          description: ''
+    put:
+      operationId: cronogramas_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cronograma actividades.
+        required: true
+      tags:
+      - cronogramas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CronogramaActividades'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CronogramaActividades'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CronogramaActividades'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CronogramaActividades'
+          description: ''
+    patch:
+      operationId: cronogramas_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cronograma actividades.
+        required: true
+      tags:
+      - cronogramas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCronogramaActividades'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCronogramaActividades'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCronogramaActividades'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CronogramaActividades'
+          description: ''
+    delete:
+      operationId: cronogramas_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this cronograma actividades.
+        required: true
+      tags:
+      - cronogramas
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/documentos/:
+    get:
+      operationId: documentos_list
+      tags:
+      - documentos
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentoGenerado'
+          description: ''
+    post:
+      operationId: documentos_create
+      tags:
+      - documentos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentoGenerado'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DocumentoGenerado'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DocumentoGenerado'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentoGenerado'
+          description: ''
+  /api/documentos/{id}/:
+    get:
+      operationId: documentos_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this documento generado.
+        required: true
+      tags:
+      - documentos
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentoGenerado'
+          description: ''
+    put:
+      operationId: documentos_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this documento generado.
+        required: true
+      tags:
+      - documentos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentoGenerado'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DocumentoGenerado'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DocumentoGenerado'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentoGenerado'
+          description: ''
+    patch:
+      operationId: documentos_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this documento generado.
+        required: true
+      tags:
+      - documentos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDocumentoGenerado'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDocumentoGenerado'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDocumentoGenerado'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentoGenerado'
+          description: ''
+    delete:
+      operationId: documentos_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this documento generado.
+        required: true
+      tags:
+      - documentos
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/hallazgos/:
+    get:
+      operationId: hallazgos_list
+      tags:
+      - hallazgos
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Hallazgo'
+          description: ''
+    post:
+      operationId: hallazgos_create
+      tags:
+      - hallazgos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Hallazgo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Hallazgo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Hallazgo'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hallazgo'
+          description: ''
+  /api/hallazgos/{id}/:
+    get:
+      operationId: hallazgos_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hallazgo.
+        required: true
+      tags:
+      - hallazgos
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hallazgo'
+          description: ''
+    put:
+      operationId: hallazgos_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hallazgo.
+        required: true
+      tags:
+      - hallazgos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Hallazgo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Hallazgo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Hallazgo'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hallazgo'
+          description: ''
+    patch:
+      operationId: hallazgos_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hallazgo.
+        required: true
+      tags:
+      - hallazgos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHallazgo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHallazgo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHallazgo'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hallazgo'
+          description: ''
+    delete:
+      operationId: hallazgos_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this hallazgo.
+        required: true
+      tags:
+      - hallazgos
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/historial-cambios/:
+    get:
+      operationId: historial_cambios_list
+      tags:
+      - historial-cambios
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HistorialCambio'
+          description: ''
+    post:
+      operationId: historial_cambios_create
+      tags:
+      - historial-cambios
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HistorialCambio'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HistorialCambio'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HistorialCambio'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistorialCambio'
+          description: ''
+  /api/historial-cambios/{id}/:
+    get:
+      operationId: historial_cambios_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this historial cambio.
+        required: true
+      tags:
+      - historial-cambios
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistorialCambio'
+          description: ''
+    put:
+      operationId: historial_cambios_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this historial cambio.
+        required: true
+      tags:
+      - historial-cambios
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HistorialCambio'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/HistorialCambio'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/HistorialCambio'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistorialCambio'
+          description: ''
+    patch:
+      operationId: historial_cambios_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this historial cambio.
+        required: true
+      tags:
+      - historial-cambios
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHistorialCambio'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHistorialCambio'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHistorialCambio'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistorialCambio'
+          description: ''
+    delete:
+      operationId: historial_cambios_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this historial cambio.
+        required: true
+      tags:
+      - historial-cambios
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/informes/:
+    get:
+      operationId: informes_list
+      tags:
+      - informes
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Informe'
+          description: ''
+    post:
+      operationId: informes_create
+      tags:
+      - informes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Informe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Informe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Informe'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Informe'
+          description: ''
+  /api/informes/{id}/:
+    get:
+      operationId: informes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this informe.
+        required: true
+      tags:
+      - informes
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Informe'
+          description: ''
+    put:
+      operationId: informes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this informe.
+        required: true
+      tags:
+      - informes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Informe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Informe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Informe'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Informe'
+          description: ''
+    patch:
+      operationId: informes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this informe.
+        required: true
+      tags:
+      - informes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInforme'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedInforme'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInforme'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Informe'
+          description: ''
+    delete:
+      operationId: informes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this informe.
+        required: true
+      tags:
+      - informes
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notificaciones/:
+    get:
+      operationId: notificaciones_list
+      tags:
+      - notificaciones
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificacionAlerta'
+          description: ''
+    post:
+      operationId: notificaciones_create
+      tags:
+      - notificaciones
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificacionAlerta'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificacionAlerta'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificacionAlerta'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificacionAlerta'
+          description: ''
+  /api/notificaciones/{id}/:
+    get:
+      operationId: notificaciones_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notificacion alerta.
+        required: true
+      tags:
+      - notificaciones
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificacionAlerta'
+          description: ''
+    put:
+      operationId: notificaciones_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notificacion alerta.
+        required: true
+      tags:
+      - notificaciones
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificacionAlerta'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificacionAlerta'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificacionAlerta'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificacionAlerta'
+          description: ''
+    patch:
+      operationId: notificaciones_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notificacion alerta.
+        required: true
+      tags:
+      - notificaciones
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificacionAlerta'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificacionAlerta'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificacionAlerta'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificacionAlerta'
+          description: ''
+    delete:
+      operationId: notificaciones_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this notificacion alerta.
+        required: true
+      tags:
+      - notificaciones
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/oportunidades-mejora/:
+    get:
+      operationId: oportunidades_mejora_list
+      tags:
+      - oportunidades-mejora
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OportunidadMejora'
+          description: ''
+    post:
+      operationId: oportunidades_mejora_create
+      tags:
+      - oportunidades-mejora
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OportunidadMejora'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OportunidadMejora'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OportunidadMejora'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OportunidadMejora'
+          description: ''
+  /api/oportunidades-mejora/{id}/:
+    get:
+      operationId: oportunidades_mejora_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this oportunidad mejora.
+        required: true
+      tags:
+      - oportunidades-mejora
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OportunidadMejora'
+          description: ''
+    put:
+      operationId: oportunidades_mejora_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this oportunidad mejora.
+        required: true
+      tags:
+      - oportunidades-mejora
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OportunidadMejora'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OportunidadMejora'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OportunidadMejora'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OportunidadMejora'
+          description: ''
+    patch:
+      operationId: oportunidades_mejora_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this oportunidad mejora.
+        required: true
+      tags:
+      - oportunidades-mejora
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOportunidadMejora'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOportunidadMejora'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOportunidadMejora'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OportunidadMejora'
+          description: ''
+    delete:
+      operationId: oportunidades_mejora_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this oportunidad mejora.
+        required: true
+      tags:
+      - oportunidades-mejora
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/planes-auditoria/:
+    get:
+      operationId: planes_auditoria_list
+      tags:
+      - planes-auditoria
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlanAuditoria'
+          description: ''
+    post:
+      operationId: planes_auditoria_create
+      tags:
+      - planes-auditoria
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanAuditoria'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PlanAuditoria'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PlanAuditoria'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanAuditoria'
+          description: ''
+  /api/planes-auditoria/{id}/:
+    get:
+      operationId: planes_auditoria_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this plan auditoria.
+        required: true
+      tags:
+      - planes-auditoria
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanAuditoria'
+          description: ''
+    put:
+      operationId: planes_auditoria_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this plan auditoria.
+        required: true
+      tags:
+      - planes-auditoria
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanAuditoria'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PlanAuditoria'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PlanAuditoria'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanAuditoria'
+          description: ''
+    patch:
+      operationId: planes_auditoria_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this plan auditoria.
+        required: true
+      tags:
+      - planes-auditoria
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPlanAuditoria'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPlanAuditoria'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPlanAuditoria'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanAuditoria'
+          description: ''
+    delete:
+      operationId: planes_auditoria_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this plan auditoria.
+        required: true
+      tags:
+      - planes-auditoria
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/planes-mejoramiento/:
+    get:
+      operationId: planes_mejoramiento_list
+      tags:
+      - planes-mejoramiento
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlanMejoramiento'
+          description: ''
+    post:
+      operationId: planes_mejoramiento_create
+      tags:
+      - planes-mejoramiento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanMejoramiento'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PlanMejoramiento'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PlanMejoramiento'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanMejoramiento'
+          description: ''
+  /api/planes-mejoramiento/{id}/:
+    get:
+      operationId: planes_mejoramiento_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this plan mejoramiento.
+        required: true
+      tags:
+      - planes-mejoramiento
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanMejoramiento'
+          description: ''
+    put:
+      operationId: planes_mejoramiento_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this plan mejoramiento.
+        required: true
+      tags:
+      - planes-mejoramiento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanMejoramiento'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PlanMejoramiento'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PlanMejoramiento'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanMejoramiento'
+          description: ''
+    patch:
+      operationId: planes_mejoramiento_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this plan mejoramiento.
+        required: true
+      tags:
+      - planes-mejoramiento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPlanMejoramiento'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPlanMejoramiento'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPlanMejoramiento'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanMejoramiento'
+          description: ''
+    delete:
+      operationId: planes_mejoramiento_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this plan mejoramiento.
+        required: true
+      tags:
+      - planes-mejoramiento
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/seguimientos/:
+    get:
+      operationId: seguimientos_list
+      tags:
+      - seguimientos
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SeguimientoAccion'
+          description: ''
+    post:
+      operationId: seguimientos_create
+      tags:
+      - seguimientos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeguimientoAccion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SeguimientoAccion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SeguimientoAccion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeguimientoAccion'
+          description: ''
+  /api/seguimientos/{id}/:
+    get:
+      operationId: seguimientos_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this seguimiento accion.
+        required: true
+      tags:
+      - seguimientos
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeguimientoAccion'
+          description: ''
+    put:
+      operationId: seguimientos_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this seguimiento accion.
+        required: true
+      tags:
+      - seguimientos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeguimientoAccion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SeguimientoAccion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SeguimientoAccion'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeguimientoAccion'
+          description: ''
+    patch:
+      operationId: seguimientos_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this seguimiento accion.
+        required: true
+      tags:
+      - seguimientos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSeguimientoAccion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSeguimientoAccion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSeguimientoAccion'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeguimientoAccion'
+          description: ''
+    delete:
+      operationId: seguimientos_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this seguimiento accion.
+        required: true
+      tags:
+      - seguimientos
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/unidades/:
+    get:
+      operationId: unidades_list
+      tags:
+      - unidades
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UnidadAuditada'
+          description: ''
+    post:
+      operationId: unidades_create
+      tags:
+      - unidades
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnidadAuditada'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UnidadAuditada'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UnidadAuditada'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnidadAuditada'
+          description: ''
+  /api/unidades/{id}/:
+    get:
+      operationId: unidades_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this unidad auditada.
+        required: true
+      tags:
+      - unidades
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnidadAuditada'
+          description: ''
+    put:
+      operationId: unidades_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this unidad auditada.
+        required: true
+      tags:
+      - unidades
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnidadAuditada'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UnidadAuditada'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UnidadAuditada'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnidadAuditada'
+          description: ''
+    patch:
+      operationId: unidades_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this unidad auditada.
+        required: true
+      tags:
+      - unidades
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUnidadAuditada'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUnidadAuditada'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUnidadAuditada'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnidadAuditada'
+          description: ''
+    delete:
+      operationId: unidades_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this unidad auditada.
+        required: true
+      tags:
+      - unidades
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    AccionMejoramiento:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        descripcion:
+          type: string
+        responsable:
+          type: string
+          maxLength: 100
+        fecha_inicio:
+          type: string
+          format: date
+        fecha_limite:
+          type: string
+          format: date
+        porcentaje_avance:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        estado:
+          type: string
+          maxLength: 50
+        observaciones:
+          type: string
+          nullable: true
+        plan:
+          type: integer
+        hallazgo:
+          type: integer
+      required:
+      - descripcion
+      - estado
+      - fecha_inicio
+      - fecha_limite
+      - hallazgo
+      - id
+      - plan
+      - responsable
+    Auditoria:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        codigo:
+          type: string
+          maxLength: 20
+        responsable_unidad:
+          type: string
+          maxLength: 100
+        tipo_auditoria:
+          type: string
+          maxLength: 50
+        fecha_inicio:
+          type: string
+          format: date
+        fecha_fin:
+          type: string
+          format: date
+          nullable: true
+        objetivo:
+          type: string
+        alcance:
+          type: string
+        estado:
+          type: string
+          maxLength: 50
+        fecha_creacion:
+          type: string
+          format: date-time
+          readOnly: true
+        unidad_auditada:
+          type: integer
+        creado_por:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - alcance
+      - codigo
+      - creado_por
+      - estado
+      - fecha_creacion
+      - fecha_inicio
+      - id
+      - objetivo
+      - responsable_unidad
+      - tipo_auditoria
+      - unidad_auditada
+    AuditoriaAuditor:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha_asignacion:
+          type: string
+          format: date-time
+          readOnly: true
+        activo:
+          type: boolean
+        auditoria:
+          type: integer
+        auditor:
+          type: integer
+      required:
+      - auditor
+      - auditoria
+      - fecha_asignacion
+      - id
+    CronogramaActividades:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha_actividad:
+          type: string
+          format: date
+        hora:
+          type: string
+          format: time
+        actividad:
+          type: string
+        auditado:
+          type: string
+          maxLength: 100
+        plan_auditoria:
+          type: integer
+      required:
+      - actividad
+      - auditado
+      - fecha_actividad
+      - hora
+      - id
+      - plan_auditoria
+    DocumentoGenerado:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tipo_documento:
+          type: string
+          maxLength: 50
+        formato:
+          type: string
+          maxLength: 20
+        fecha_generacion:
+          type: string
+          format: date
+          readOnly: true
+        auditoria:
+          type: integer
+        generado_por:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - auditoria
+      - fecha_generacion
+      - formato
+      - generado_por
+      - id
+      - tipo_documento
+    EmailTokenObtainPair:
+      type: object
+      properties:
+        email:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    Hallazgo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        numero_hallazgo:
+          type: string
+          maxLength: 20
+        condicion:
+          type: string
+        criterio:
+          type: string
+        causa:
+          type: string
+        efecto:
+          type: string
+        estado:
+          type: string
+          maxLength: 50
+        titulo:
+          type: string
+          maxLength: 100
+        recomendaciones:
+          type: string
+        auditoria:
+          type: integer
+      required:
+      - auditoria
+      - causa
+      - condicion
+      - criterio
+      - efecto
+      - estado
+      - id
+      - numero_hallazgo
+      - recomendaciones
+      - titulo
+    HistorialCambio:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha_cambio:
+          type: string
+          format: date-time
+          readOnly: true
+        tipo_accion:
+          type: string
+          maxLength: 50
+        descripcion:
+          type: string
+        usuario:
+          type: integer
+          readOnly: true
+          nullable: true
+        auditoria:
+          type: integer
+      required:
+      - auditoria
+      - descripcion
+      - fecha_cambio
+      - id
+      - tipo_accion
+      - usuario
+    Informe:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tipo_informe:
+          type: string
+          maxLength: 50
+        fecha_informe:
+          type: string
+          format: date
+          nullable: true
+        actividades_realizadas:
+          type: string
+        conclusiones:
+          type: string
+        observaciones:
+          type: string
+          nullable: true
+        evidencias:
+          type: string
+          nullable: true
+        fecha_creacion:
+          type: string
+          format: date-time
+          readOnly: true
+        auditoria:
+          type: integer
+        creado_por:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - actividades_realizadas
+      - auditoria
+      - conclusiones
+      - creado_por
+      - fecha_creacion
+      - id
+      - tipo_informe
+    NotificacionAlerta:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tipo_alerta:
+          type: string
+          maxLength: 50
+        mensaje:
+          type: string
+        fecha_notificacion:
+          type: string
+          format: date-time
+          readOnly: true
+        leida:
+          type: boolean
+        accion:
+          type: integer
+        usuario:
+          type: integer
+      required:
+      - accion
+      - fecha_notificacion
+      - id
+      - mensaje
+      - tipo_alerta
+      - usuario
+    OportunidadMejora:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        numero_oportunidad:
+          type: string
+          maxLength: 20
+        descripcion:
+          type: string
+        recomendacion:
+          type: string
+        fecha_creacion:
+          type: string
+          format: date
+        estado:
+          type: string
+          maxLength: 50
+        auditoria:
+          type: integer
+      required:
+      - auditoria
+      - descripcion
+      - estado
+      - fecha_creacion
+      - id
+      - numero_oportunidad
+      - recomendacion
+    PatchedAccionMejoramiento:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        descripcion:
+          type: string
+        responsable:
+          type: string
+          maxLength: 100
+        fecha_inicio:
+          type: string
+          format: date
+        fecha_limite:
+          type: string
+          format: date
+        porcentaje_avance:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        estado:
+          type: string
+          maxLength: 50
+        observaciones:
+          type: string
+          nullable: true
+        plan:
+          type: integer
+        hallazgo:
+          type: integer
+    PatchedAuditoria:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        codigo:
+          type: string
+          maxLength: 20
+        responsable_unidad:
+          type: string
+          maxLength: 100
+        tipo_auditoria:
+          type: string
+          maxLength: 50
+        fecha_inicio:
+          type: string
+          format: date
+        fecha_fin:
+          type: string
+          format: date
+          nullable: true
+        objetivo:
+          type: string
+        alcance:
+          type: string
+        estado:
+          type: string
+          maxLength: 50
+        fecha_creacion:
+          type: string
+          format: date-time
+          readOnly: true
+        unidad_auditada:
+          type: integer
+        creado_por:
+          type: integer
+          readOnly: true
+          nullable: true
+    PatchedAuditoriaAuditor:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha_asignacion:
+          type: string
+          format: date-time
+          readOnly: true
+        activo:
+          type: boolean
+        auditoria:
+          type: integer
+        auditor:
+          type: integer
+    PatchedCronogramaActividades:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha_actividad:
+          type: string
+          format: date
+        hora:
+          type: string
+          format: time
+        actividad:
+          type: string
+        auditado:
+          type: string
+          maxLength: 100
+        plan_auditoria:
+          type: integer
+    PatchedDocumentoGenerado:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tipo_documento:
+          type: string
+          maxLength: 50
+        formato:
+          type: string
+          maxLength: 20
+        fecha_generacion:
+          type: string
+          format: date
+          readOnly: true
+        auditoria:
+          type: integer
+        generado_por:
+          type: integer
+          readOnly: true
+          nullable: true
+    PatchedHallazgo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        numero_hallazgo:
+          type: string
+          maxLength: 20
+        condicion:
+          type: string
+        criterio:
+          type: string
+        causa:
+          type: string
+        efecto:
+          type: string
+        estado:
+          type: string
+          maxLength: 50
+        titulo:
+          type: string
+          maxLength: 100
+        recomendaciones:
+          type: string
+        auditoria:
+          type: integer
+    PatchedHistorialCambio:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha_cambio:
+          type: string
+          format: date-time
+          readOnly: true
+        tipo_accion:
+          type: string
+          maxLength: 50
+        descripcion:
+          type: string
+        usuario:
+          type: integer
+          readOnly: true
+          nullable: true
+        auditoria:
+          type: integer
+    PatchedInforme:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tipo_informe:
+          type: string
+          maxLength: 50
+        fecha_informe:
+          type: string
+          format: date
+          nullable: true
+        actividades_realizadas:
+          type: string
+        conclusiones:
+          type: string
+        observaciones:
+          type: string
+          nullable: true
+        evidencias:
+          type: string
+          nullable: true
+        fecha_creacion:
+          type: string
+          format: date-time
+          readOnly: true
+        auditoria:
+          type: integer
+        creado_por:
+          type: integer
+          readOnly: true
+          nullable: true
+    PatchedNotificacionAlerta:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tipo_alerta:
+          type: string
+          maxLength: 50
+        mensaje:
+          type: string
+        fecha_notificacion:
+          type: string
+          format: date-time
+          readOnly: true
+        leida:
+          type: boolean
+        accion:
+          type: integer
+        usuario:
+          type: integer
+    PatchedOportunidadMejora:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        numero_oportunidad:
+          type: string
+          maxLength: 20
+        descripcion:
+          type: string
+        recomendacion:
+          type: string
+        fecha_creacion:
+          type: string
+          format: date
+        estado:
+          type: string
+          maxLength: 50
+        auditoria:
+          type: integer
+    PatchedPlanAuditoria:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        criterios:
+          type: string
+        riesgos_oportunidades:
+          type: string
+        documentos_referencia:
+          type: string
+        fecha_creacion:
+          type: string
+          format: date
+        auditoria:
+          type: integer
+    PatchedPlanMejoramiento:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha_creacion:
+          type: string
+          format: date
+        estado:
+          type: string
+          maxLength: 50
+        observaciones:
+          type: string
+          nullable: true
+        auditoria:
+          type: integer
+    PatchedSeguimientoAccion:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        porcentaje_avance:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        descripcion:
+          type: string
+        fecha_seguimiento:
+          type: string
+          format: date
+        observaciones:
+          type: string
+        estado:
+          type: string
+          maxLength: 50
+        evidencias:
+          type: string
+          nullable: true
+        accion:
+          type: integer
+        registrado_por:
+          type: integer
+          readOnly: true
+          nullable: true
+    PatchedUnidadAuditada:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nombre_unidad:
+          type: string
+          maxLength: 100
+        tipo:
+          type: string
+          maxLength: 50
+        descripcion:
+          type: string
+          nullable: true
+        activo:
+          type: boolean
+    PlanAuditoria:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        criterios:
+          type: string
+        riesgos_oportunidades:
+          type: string
+        documentos_referencia:
+          type: string
+        fecha_creacion:
+          type: string
+          format: date
+        auditoria:
+          type: integer
+      required:
+      - auditoria
+      - criterios
+      - documentos_referencia
+      - fecha_creacion
+      - id
+      - riesgos_oportunidades
+    PlanMejoramiento:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fecha_creacion:
+          type: string
+          format: date
+        estado:
+          type: string
+          maxLength: 50
+        observaciones:
+          type: string
+          nullable: true
+        auditoria:
+          type: integer
+      required:
+      - auditoria
+      - estado
+      - fecha_creacion
+      - id
+    RolEnum:
+      enum:
+      - Administrador
+      - Auditor
+      - Usuario consulta
+      type: string
+      description: |-
+        * `Administrador` - Administrador
+        * `Auditor` - Auditor
+        * `Usuario consulta` - Usuario consulta
+    SeguimientoAccion:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        porcentaje_avance:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        descripcion:
+          type: string
+        fecha_seguimiento:
+          type: string
+          format: date
+        observaciones:
+          type: string
+        estado:
+          type: string
+          maxLength: 50
+        evidencias:
+          type: string
+          nullable: true
+        accion:
+          type: integer
+        registrado_por:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - accion
+      - descripcion
+      - estado
+      - fecha_seguimiento
+      - id
+      - observaciones
+      - porcentaje_avance
+      - registrado_por
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    UnidadAuditada:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nombre_unidad:
+          type: string
+          maxLength: 100
+        tipo:
+          type: string
+          maxLength: 50
+        descripcion:
+          type: string
+          nullable: true
+        activo:
+          type: boolean
+      required:
+      - id
+      - nombre_unidad
+      - tipo
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        roles:
+          type: array
+          items:
+            type: string
+          readOnly: true
+      required:
+      - email
+      - first_name
+      - id
+      - last_name
+      - roles
+    UsuarioCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        rol:
+          allOf:
+          - $ref: '#/components/schemas/RolEnum'
+          writeOnly: true
+      required:
+      - email
+      - id
+      - password
+      - rol
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

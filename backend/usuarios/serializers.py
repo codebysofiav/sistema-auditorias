@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import Usuario
@@ -64,5 +65,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
+    @extend_schema_field(serializers.ListField(child=serializers.CharField()))
     def get_roles(self, obj):
         return list(obj.groups.values_list("name", flat=True))
