@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #F6F5F2;
+  --surface: #FFFFFF;
+  --ink: #1D2B3A;
+  --ink-soft: #5B6B7C;
+  --line: #DDD9D0;
+  --accent: #B8863C;
+  --accent-soft: #F1E4CC;
+  --ok: #3F7A5C;
+  --ok-soft: #DCEAE1;
+  --warn: #A8442E;
+  --warn-soft: #F3DCD6;
+  --sidebar-bg: #1D2B3A;
+  --sidebar-hover: #2A3A4C;
+  --sidebar-line: #33455A;
+  --sidebar-text: #C7D0D9;
+  --radius: 3px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+}
+
+.font-mono { font-family: 'IBM Plex Mono', monospace; }
+
+input, button { font-family: inherit; }

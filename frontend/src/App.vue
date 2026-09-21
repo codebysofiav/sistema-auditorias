@@ -1,7 +1,8 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+// El layout (sidebar, etc.) vive dentro de cada vista protegida
+// (ej. DashboardView), no aquí, porque LoginView no debe mostrar sidebar.
 </script>
 
 <template>
-  <HelloWorld />
+  <router-view />
 </template>
