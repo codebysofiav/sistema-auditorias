@@ -6,6 +6,14 @@ import AuditoriasListView from '@/views/AuditoriasListView.vue'
 import AuditoriaFormView from '@/views/AuditoriaFormView.vue'
 import HallazgosListView from '@/views/HallazgosListView.vue'
 import HallazgoFormView from '@/views/HallazgoFormView.vue'
+import PlanesListView from '@/views/PlanesListView.vue'
+import PlanFormView from '@/views/PlanFormView.vue'
+import PlanDetalleView from '@/views/PlanDetalleView.vue'
+import AccionFormView from '@/views/AccionFormView.vue'
+import InformesListView from '@/views/InformesListView.vue'
+import InformeFormView from '@/views/InformeFormView.vue'
+import DocumentosListView from '@/views/DocumentosListView.vue'
+import DocumentoGenerarView from '@/views/DocumentoGenerarView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,8 +62,68 @@ const router = createRouter({
       component: HallazgoFormView,
       meta: { requiresAuth: true },
     },
-    // AJUSTAR: aquí se van agregando las rutas de los demás módulos
-    // (planes de mejoramiento, informes, documentos, etc.) a medida que se construyan.
+    {
+      path: '/plan-mejoramiento',
+      name: 'planes-mejoramiento',
+      component: PlanesListView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/plan-mejoramiento/nuevo',
+      name: 'plan-nuevo',
+      component: PlanFormView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/plan-mejoramiento/:id',
+      name: 'plan-detalle',
+      component: PlanDetalleView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/plan-mejoramiento/:planId/acciones/nueva',
+      name: 'accion-nueva',
+      component: AccionFormView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/plan-mejoramiento/:planId/acciones/:accionId',
+      name: 'accion-detalle',
+      component: AccionFormView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/informes',
+      name: 'informes',
+      component: InformesListView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/informes/nuevo',
+      name: 'informe-nuevo',
+      component: InformeFormView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/informes/:id',
+      name: 'informe-detalle',
+      component: InformeFormView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/documentos',
+      name: 'documentos',
+      component: DocumentosListView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/documentos/generar',
+      name: 'documento-generar',
+      component: DocumentoGenerarView,
+      meta: { requiresAuth: true },
+    },
+    // AJUSTAR: aquí se van agregando las rutas de los módulos restantes
+    // (Usuarios) a medida que se construyan.
   ],
 })
 
