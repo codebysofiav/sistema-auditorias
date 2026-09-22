@@ -58,3 +58,9 @@ class LogoutView(APIView):
         return Response({
             "detail": "Sesion cerrada. El cliente debe descartar los tokens JWT."
         })
+    
+class UsuarioListView(generics.ListAPIView):
+    queryset = Usuario.objects.all().order_by("email")
+    serializer_class = UsuarioSerializer
+    permission_classes = [EsAdministrador]
+
