@@ -77,6 +77,8 @@ class AuditoriaRolePermission(permissions.BasePermission):
 
         if user_in_group(user, self.auditor_group):
             auditoria = get_auditoria_from_object(obj)
+            if getattr(obj._meta, "model_name", "") == "unidadauditada":
+                return True
             if not auditoria and request.method in permissions.SAFE_METHODS:
                 return getattr(obj._meta, "model_name", "") == "unidadauditada"
             return auditor_is_assigned(user, auditoria)

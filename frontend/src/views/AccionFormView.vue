@@ -5,7 +5,7 @@ import apiClient from '@/api/client'
 import AppSidebar from '@/components/AppSidebar.vue'
 
 // AJUSTAR: texto libre en el backend; convención sugerida del frontend.
-const ESTADOS_ACCION = ['Pendiente', 'En progreso', 'Cerrada']
+const ESTADOS_ACCION = ['Pendiente', 'En progreso', 'Cerrada', 'Vencida']
 const ESTADOS_SEGUIMIENTO = ['En progreso', 'Cumplido', 'Retrasado']
 
 const route = useRoute()

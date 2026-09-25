@@ -1,5 +1,7 @@
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
 
 from .models import (
     AccionMejoramiento,
@@ -103,7 +105,7 @@ class AuditoriaAccessMixin:
 
         model = self.queryset.model
 
-        if model == Auditoria:
+        if model in (Auditoria, UnidadAuditada):
             return True
 
         auditoria_id = self.request.data.get("auditoria")
@@ -155,9 +157,18 @@ class AuditoriaAccessMixin:
 
 
 class UnidadAuditadaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
-    admin_write_only = True
     queryset = UnidadAuditada.objects.all()
     serializer_class = UnidadAuditadaSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        incluir_inactivas = self.request.query_params.get("incluir_inactivas") == "true"
+        return queryset if incluir_inactivas else queryset.filter(activo=True)
+
+    def perform_destroy(self, instance):
+        # Evita eliminar en cascada las auditorias relacionadas con la unidad.
+        instance.activo = False
+        instance.save(update_fields=["activo"])
 
 
 class AuditoriaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
@@ -228,7 +239,6 @@ class AccionMejoramientoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_active_filter = "plan__auditoria__auditoriaauditor__activo"
     queryset = AccionMejoramiento.objects.all()
     serializer_class = AccionMejoramientoSerializer
-    autor_field = "registrado_por"
 
 class SeguimientoAccionViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "accion__plan__auditoria__auditoriaauditor__auditor"
@@ -263,3 +273,26 @@ class NotificacionAlertaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
             queryset = queryset.filter(usuario=user)
 
         return queryset
+
+    @action(detail=False, methods=["get"], url_path="no-leidas")
+    def no_leidas(self, request):
+        queryset = NotificacionAlerta.objects.filter(
+            usuario=request.user,
+            leida=False,
+        ).order_by("-fecha_notificacion")
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["post"], url_path="marcar-leida")
+    def marcar_leida(self, request, pk=None):
+        alerta = NotificacionAlerta.objects.filter(
+            pk=pk,
+            usuario=request.user,
+        ).first()
+
+        if alerta is None:
+            raise PermissionDenied("No tiene permiso para modificar esta alerta.")
+
+        alerta.leida = True
+        alerta.save(update_fields=["leida"])
+        return Response(self.get_serializer(alerta).data)

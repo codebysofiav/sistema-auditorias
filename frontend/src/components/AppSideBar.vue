@@ -1,8 +1,33 @@
 <script setup>
+import { onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import apiClient from '@/api/client'
 import logoUis from '@/assets/logo-uis.png'
 
 const auth = useAuthStore()
+const alertas = ref([])
+const mostrarAlertas = ref(false)
+
+async function cargarAlertas() {
+  if (!auth.isAuthenticated) return
+  try {
+    const { data } = await apiClient.get('/notificaciones/no-leidas/')
+    alertas.value = data.results ?? data
+  } catch {
+    alertas.value = []
+  }
+}
+
+async function marcarLeida(alerta) {
+  try {
+    await apiClient.post(`/notificaciones/${alerta.id}/marcar-leida/`)
+    alertas.value = alertas.value.filter((item) => item.id !== alerta.id)
+  } catch {
+    // Mantiene la alerta visible para que el usuario pueda intentarlo de nuevo.
+  }
+}
+
+onMounted(cargarAlertas)
 </script>
 
 <template>
@@ -19,6 +44,7 @@ const auth = useAuthStore()
       <router-link to="/dashboard">Dashboard</router-link>
       <router-link v-if="auth.isAdmin" to="/usuarios">Usuarios</router-link>
       <router-link to="/auditorias">Auditorías</router-link>
+      <router-link to="/unidades">Unidades auditadas</router-link>
       <router-link to="/planeacion">Planeación</router-link>
       <router-link to="/informes">Informes</router-link>
       <router-link to="/hallazgos">Hallazgos</router-link>
@@ -27,6 +53,19 @@ const auth = useAuthStore()
     </nav>
 
     <div class="user-chip">
+      <div class="alertas">
+        <button class="alerts-button" type="button" @click="mostrarAlertas = !mostrarAlertas">
+          Alertas <span v-if="alertas.length" class="alerts-count">{{ alertas.length }}</span>
+        </button>
+        <div v-if="mostrarAlertas" class="alerts-panel">
+          <p v-if="alertas.length === 0" class="alerts-empty">No hay alertas pendientes.</p>
+          <article v-for="alerta in alertas" :key="alerta.id" class="alert-item">
+            <strong>{{ alerta.tipo_alerta }}</strong>
+            <span>{{ alerta.mensaje }}</span>
+            <button type="button" @click="marcarLeida(alerta)">Marcar leída</button>
+          </article>
+        </div>
+      </div>
       <div>{{ auth.user?.first_name }} {{ auth.user?.last_name }}</div>
       <span class="role-tag">{{ auth.rol?.toUpperCase() }}</span>
       <button class="logout-link" @click="auth.logout()">Cerrar sesión</button>
@@ -72,6 +111,11 @@ nav a.router-link-active { background: var(--sidebar-hover); color: #fff; font-w
   border-top: 1px solid var(--sidebar-line);
   font-size: 12px;
 }
+.alertas { position: relative; margin-bottom: 16px; }
+.alerts-button { width: 100%; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--sidebar-line); background: transparent; color: var(--sidebar-text); cursor: pointer; font-size: 12px; padding: 7px 8px; }
+.alerts-count { min-width: 18px; border-radius: 9px; background: var(--warn); color: #fff; font-size: 11px; line-height: 18px; text-align: center; }
+.alerts-panel { position: absolute; z-index: 2; bottom: calc(100% + 6px); left: 0; width: 260px; max-height: 280px; overflow-y: auto; border: 1px solid var(--sidebar-line); background: var(--sidebar-bg); padding: 8px; }
+.alerts-empty { margin: 6px; color: #8494A5; font-size: 12px; }.alert-item { display: flex; flex-direction: column; gap: 5px; border-bottom: 1px solid var(--sidebar-line); padding: 9px 4px; font-size: 12px; }.alert-item:last-child { border-bottom: 0; }.alert-item strong { color: #F1E4CC; }.alert-item span { color: var(--sidebar-text); line-height: 1.35; }.alert-item button { align-self: flex-start; border: 0; background: none; color: #9FC6AE; cursor: pointer; font-size: 11px; padding: 0; }
 .role-tag {
   display: inline-block;
   margin-top: 6px;

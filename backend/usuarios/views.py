@@ -7,7 +7,12 @@ from rest_framework import generics, permissions
 from .models import Usuario
 
 
-from .serializers import EmailTokenObtainPairSerializer, UsuarioCreateSerializer, UsuarioSerializer
+from .serializers import (
+    EmailTokenObtainPairSerializer,
+    UsuarioCreateSerializer,
+    UsuarioSerializer,
+    UsuarioUpdateSerializer,
+)
 
 class EsAdministrador(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -64,3 +69,12 @@ class UsuarioListView(generics.ListAPIView):
     serializer_class = UsuarioSerializer
     permission_classes = [EsAdministrador]
 
+
+class UsuarioDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Usuario.objects.all()
+    permission_classes = [EsAdministrador]
+
+    def get_serializer_class(self):
+        if self.request.method in ("PUT", "PATCH"):
+            return UsuarioUpdateSerializer
+        return UsuarioSerializer

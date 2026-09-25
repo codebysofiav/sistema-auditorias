@@ -17,6 +17,7 @@ const form = ref({
   auditoria: '',
   estado: ESTADOS[0],
   observaciones: '',
+  fecha_creacion: new Date().toISOString().slice(0, 10),
 })
 
 onMounted(async () => {
@@ -87,6 +88,11 @@ async function guardar() {
             <select v-model="form.estado" required>
               <option v-for="e in ESTADOS" :key="e" :value="e">{{ e }}</option>
             </select>
+          </div>
+
+          <div class="field">
+            <label>Fecha de creación</label>
+            <input v-model="form.fecha_creacion" type="date" required />
           </div>
 
           <div class="field">

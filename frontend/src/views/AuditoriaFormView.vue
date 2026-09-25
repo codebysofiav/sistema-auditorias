@@ -39,7 +39,7 @@ const form = ref({
 })
 
 async function cargarUnidades() {
-  const { data } = await apiClient.get('/unidades-auditadas/')
+  const { data } = await apiClient.get('/unidades/')
   unidades.value = data.results ?? data
 }
 

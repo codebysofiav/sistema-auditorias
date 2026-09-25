@@ -14,6 +14,14 @@ import InformesListView from '@/views/InformesListView.vue'
 import InformeFormView from '@/views/InformeFormView.vue'
 import DocumentosListView from '@/views/DocumentosListView.vue'
 import DocumentoGenerarView from '@/views/DocumentoGenerarView.vue'
+import UsuariosListView from '@/views/UsuariosListView.vue'
+import UsuarioFormView from '@/views/UsuarioFormView.vue'
+import PlaneacionListView from '@/views/PlaneacionListView.vue'
+import PlanAuditoriaFormView from '@/views/PlanAuditoriaFormView.vue'
+import PlaneacionDetalleView from '@/views/PlaneacionDetalleView.vue'
+import CronogramaFormView from '@/views/CronogramaFormView.vue'
+import UnidadesListView from '@/views/UnidadesListView.vue'
+import UnidadFormView from '@/views/UnidadFormView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +50,24 @@ const router = createRouter({
       path: '/auditorias/:id',
       name: 'auditoria-detalle',
       component: AuditoriaFormView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/unidades',
+      name: 'unidades',
+      component: UnidadesListView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/unidades/nueva',
+      name: 'unidad-nueva',
+      component: UnidadFormView,
+      meta: { requiresAuth: true, requiresWrite: true },
+    },
+    {
+      path: '/unidades/:id',
+      name: 'unidad-detalle',
+      component: UnidadFormView,
       meta: { requiresAuth: true },
     },
     {
@@ -122,16 +148,86 @@ const router = createRouter({
       component: DocumentoGenerarView,
       meta: { requiresAuth: true },
     },
-    // AJUSTAR: aquí se van agregando las rutas de los módulos restantes
-    // (Usuarios) a medida que se construyan.
+    // --- Usuarios (solo Administrador) ---
+    {
+      path: '/usuarios',
+      name: 'usuarios',
+      component: UsuariosListView,
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/usuarios/nuevo',
+      name: 'usuario-nuevo',
+      component: UsuarioFormView,
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/usuarios/:id/editar',
+      name: 'usuario-editar',
+      component: UsuarioFormView,
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/planeacion',
+      name: 'planeacion',
+      component: PlaneacionListView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/planeacion/nueva',
+      name: 'plan-auditoria-nuevo',
+      component: PlanAuditoriaFormView,
+      meta: { requiresAuth: true, requiresWrite: true },
+    },
+    {
+      path: '/planeacion/:id',
+      name: 'plan-auditoria-detalle',
+      component: PlaneacionDetalleView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/planeacion/:id/editar',
+      name: 'plan-auditoria-editar',
+      component: PlanAuditoriaFormView,
+      meta: { requiresAuth: true, requiresWrite: true },
+    },
+    {
+      path: '/planeacion/:planId/cronogramas/nuevo',
+      name: 'cronograma-nuevo',
+      component: CronogramaFormView,
+      meta: { requiresAuth: true, requiresWrite: true },
+    },
+    {
+      path: '/planeacion/:planId/cronogramas/:cronogramaId',
+      name: 'cronograma-detalle',
+      component: CronogramaFormView,
+      meta: { requiresAuth: true },
+    },
   ],
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const auth = useAuthStore()
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return { name: 'login' }
+  }
+
+  if (auth.isAuthenticated && !auth.user) {
+    try {
+      await auth.fetchUser()
+    } catch {
+      await auth.logout()
+      return { name: 'login' }
+    }
+  }
+
+  if (to.meta.requiresAdmin && !auth.isAdmin) {
+    return { name: 'dashboard' }
+  }
+
+  if (to.meta.requiresWrite && !(auth.isAdmin || auth.isAuditor)) {
+    return { name: 'dashboard' }
   }
 
   if (to.name === 'login' && auth.isAuthenticated) {

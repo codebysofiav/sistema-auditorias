@@ -17,6 +17,20 @@ const errorMsg = ref('')
 
 const puedeEscribir = auth.isAdmin || auth.isAuditor
 
+function alertaVencimiento(accion) {
+  if (accion.estado === 'Cerrada') return ''
+  if (accion.estado === 'Vencida') return 'Vencida'
+
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  const fechaLimite = new Date(`${accion.fecha_limite}T00:00:00`)
+  const diasRestantes = Math.round((fechaLimite - hoy) / 86400000)
+
+  if (diasRestantes < 0) return 'Vencida'
+  if (diasRestantes <= 2) return 'Próxima a vencer'
+  return ''
+}
+
 async function cargar() {
   loading.value = true
   errorMsg.value = ''
@@ -81,11 +95,11 @@ onMounted(cargar)
             </tr>
           </thead>
           <tbody>
-            <tr v-for="a in acciones" :key="a.id">
+            <tr v-for="a in acciones" :key="a.id" :class="{ 'row-expired': alertaVencimiento(a) === 'Vencida', 'row-due-soon': alertaVencimiento(a) === 'Próxima a vencer' }">
               <td>{{ a.descripcion }}</td>
               <td>{{ a.responsable }}</td>
               <td class="code">{{ a.porcentaje_avance }}%</td>
-              <td>{{ a.estado }}</td>
+              <td><span class="status">{{ a.estado }}</span><span v-if="alertaVencimiento(a)" class="deadline-alert">{{ alertaVencimiento(a) }}</span></td>
               <td class="code">{{ a.fecha_limite }}</td>
               <td class="actions-cell">
                 <button class="btn-link" @click="router.push({ name: 'accion-detalle', params: { planId: plan.id, accionId: a.id } })">
@@ -117,5 +131,6 @@ tr:last-child td { border-bottom: none; }
 .code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); }
 .actions-cell { text-align: right; }
 .btn-link { background: none; border: 1px solid var(--line); border-radius: var(--radius); padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--ink); }
+.status { display: block; }.deadline-alert { display: inline-block; margin-top: 4px; border-radius: 2px; background: var(--warn-soft); color: var(--warn); font-size: 11px; padding: 2px 6px; }.row-expired td { background: #fff6f4; }.row-due-soon td { background: #fffaf0; }
 .empty-note { font-size: 12px; color: var(--ink-soft); padding: 18px 14px; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); }
 </style>
