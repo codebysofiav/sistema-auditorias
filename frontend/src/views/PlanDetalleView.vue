@@ -131,6 +131,6 @@ tr:last-child td { border-bottom: none; }
 .code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); }
 .actions-cell { text-align: right; }
 .btn-link { background: none; border: 1px solid var(--line); border-radius: var(--radius); padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--ink); }
-.status { display: block; }.deadline-alert { display: inline-block; margin-top: 4px; border-radius: 2px; background: var(--warn-soft); color: var(--warn); font-size: 11px; padding: 2px 6px; }.row-expired td { background: #fff6f4; }.row-due-soon td { background: #fffaf0; }
+.status { display: block; }.deadline-alert { display: inline-block; margin-top: 4px; border-radius: 2px; background: var(--warn-soft); color: var(--warn); font-size: 11px; padding: 2px 6px; }.row-expired td { background: #FCF7F8; }.row-due-soon td { background: #FFF9EE; }
 .empty-note { font-size: 12px; color: var(--ink-soft); padding: 18px 14px; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); }
 </style>

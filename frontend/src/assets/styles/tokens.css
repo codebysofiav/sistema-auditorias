@@ -6,28 +6,206 @@
   --ink: #1D2B3A;
   --ink-soft: #5B6B7C;
   --line: #DDD9D0;
-  --accent: #B8863C;
+  --accent: #c49259;
   --accent-soft: #F1E4CC;
   --ok: #3F7A5C;
   --ok-soft: #DCEAE1;
-  --warn: #A8442E;
-  --warn-soft: #F3DCD6;
+  --warn: #8E3A4A;
+  --warn-soft: #F3E2E5;
   --sidebar-bg: #1D2B3A;
   --sidebar-hover: #2A3A4C;
   --sidebar-line: #33455A;
   --sidebar-text: #C7D0D9;
   --radius: 3px;
+  --surface-muted: #FBFAF8;
+  --ink-faint: #7A8794;
+  --focus-ring: rgba(184, 134, 60, 0.24);
+  --shadow-subtle: 0 8px 20px rgba(29, 43, 58, 0.045);
 }
 
 * { box-sizing: border-box; }
+
+html { min-width: 320px; }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
   font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+  line-height: 1.45;
+  text-rendering: optimizeLegibility;
 }
 
 .font-mono { font-family: 'IBM Plex Mono', monospace; }
 
-input, button { font-family: inherit; }
+input, button, select, textarea { font-family: inherit; }
+
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+
+button:not(:disabled) { cursor: pointer; }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+}
+
+/* Shared visual treatment for existing list and form views. */
+.shell { background: var(--bg); }
+
+.main {
+  padding-bottom: 48px !important;
+}
+
+.main > h1,
+.main .header-row h1,
+.main .head h1 {
+  letter-spacing: 0 !important;
+}
+
+.main:not(.dashboard-main) {
+  font-size: 14px;
+}
+
+.main .sub {
+  line-height: 1.5;
+}
+
+.main .header-row,
+.main .head {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.main table {
+  box-shadow: var(--shadow-subtle);
+}
+
+.main table th {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.main table tbody tr {
+  transition: background-color 150ms ease;
+}
+
+.main table tbody tr:hover td {
+  background: var(--surface-muted);
+}
+
+.main .form-card {
+  box-shadow: var(--shadow-subtle);
+}
+
+.main:not(.dashboard-main) > .form-card,
+.main:not(.dashboard-main) > form.form-card {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.main .field label {
+  font-weight: 500;
+  font-size: 13.5px;
+}
+
+.main .field input,
+.main .field select,
+.main .field textarea {
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.main:not(.dashboard-main) .field input,
+.main:not(.dashboard-main) .field select,
+.main:not(.dashboard-main) .field textarea {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.main .field input:disabled,
+.main .field select:disabled,
+.main .field textarea:disabled {
+  background: #F0EEE9;
+  color: var(--ink-faint);
+  cursor: not-allowed;
+}
+
+.main .field input:hover,
+.main .field select:hover,
+.main .field textarea:hover {
+  border-color: #C8C1B5;
+}
+
+.main .field input:focus,
+.main .field select:focus,
+.main .field textarea:focus {
+  background: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.main .btn-primary {
+  box-shadow: 0 2px 0 rgba(10, 20, 31, 0.18);
+  transition: background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.main .btn-primary:hover:not(:disabled) {
+  background: #26394D;
+  box-shadow: 0 4px 10px rgba(29, 43, 58, 0.14);
+  transform: translateY(-1px);
+}
+
+.main .btn-primary:disabled {
+  box-shadow: none;
+}
+
+.main .btn-link,
+.main .btn-back {
+  transition: border-color 150ms ease, color 150ms ease, background-color 150ms ease;
+}
+
+.main .btn-link:hover,
+.main .btn-back:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.main .empty-note {
+  background: var(--surface-muted);
+  line-height: 1.5;
+}
+
+.main .error-msg {
+  background: var(--warn-soft);
+  border-left: 2px solid var(--warn);
+  padding: 8px 10px;
+}
+
+.main .role-tag,
+.main .audit-status,
+.main .seg-estado,
+.main .deadline-alert {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.main .btn-danger {
+  border-color: #DEC2C8;
+  background: #FFF9FA;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.main .btn-danger:hover:not(:disabled) {
+  background: var(--warn-soft);
+  border-color: var(--warn);
+}
+
+@media (max-width: 750px) {
+  .shell { display: block !important; }
+  .main { padding: 24px 20px 40px !important; }
+  .grid-2 { grid-template-columns: 1fr !important; }
+}

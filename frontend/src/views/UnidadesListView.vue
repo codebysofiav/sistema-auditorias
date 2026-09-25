@@ -40,7 +40,7 @@ onMounted(cargar)
 
 <template>
   <div class="shell"><AppSidebar /><main class="main">
-    <div class="header-row"><div><h1>Unidades auditadas</h1><p class="sub">{{ puedeEscribir ? 'Gestione las unidades disponibles para auditorías.' : 'Listado en modo solo lectura.' }}</p></div><button v-if="puedeEscribir" class="btn-primary" @click="router.push({ name: 'unidad-nueva' })">Nueva unidad</button></div>
+    <div class="header-row"><div><h1>Unidades auditadas</h1><p class="sub">{{ puedeEscribir ? 'Gestione las unidades disponibles para auditorías.' : 'Listado en modo solo lectura.' }}</p></div><button v-if="puedeEscribir" class="btn-primary" @click="router.push({ name: 'unidad-nueva' })">+ Nueva unidad</button></div>
     <p v-if="loading" class="empty-note">Cargando...</p><p v-else-if="errorMsg" class="empty-note">{{ errorMsg }}</p><p v-else-if="unidades.length === 0" class="empty-note">No hay unidades activas para mostrar.</p>
     <table v-else><thead><tr><th>Nombre</th><th>Tipo</th><th>Descripción</th><th></th></tr></thead><tbody><tr v-for="unidad in unidades" :key="unidad.id"><td>{{ unidad.nombre_unidad }}</td><td>{{ unidad.tipo }}</td><td>{{ unidad.descripcion || '—' }}</td><td class="actions-cell"><button class="btn-link" @click="router.push({ name: 'unidad-detalle', params: { id: unidad.id } })">{{ puedeEscribir ? 'Ver / Editar' : 'Ver' }}</button><button v-if="puedeEscribir" class="btn-danger" :disabled="desactivandoId === unidad.id" @click="desactivar(unidad)">{{ desactivandoId === unidad.id ? 'Desactivando...' : 'Desactivar' }}</button></td></tr></tbody></table>
   </main></div>

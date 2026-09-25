@@ -1,7 +1,14 @@
+from datetime import timedelta
+
+from django.contrib.auth.models import Group
+from django.db.models import Count, Exists, OuterRef
+from django.utils import timezone
+from drf_spectacular.utils import OpenApiTypes, extend_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import (
     AccionMejoramiento,
@@ -38,6 +45,26 @@ from .serializers import (
 )
 
 
+ESTADOS_ACCION_FINALIZADA = ("Cerrada", "Completada")
+ESTADO_HALLAZGO_CERRADO = "Cerrado"
+
+
+def auditorias_visibles_para_usuario(user):
+    if user.is_superuser or user.groups.filter(name="Administrador").exists():
+        return Auditoria.objects.all()
+
+    if user.groups.filter(name="Usuario consulta").exists():
+        return Auditoria.objects.all()
+
+    if user.groups.filter(name="Auditor").exists():
+        return Auditoria.objects.filter(
+            auditoriaauditor__auditor=user,
+            auditoriaauditor__activo=True,
+        ).distinct()
+
+    return Auditoria.objects.none()
+
+
 class AuditoriaAccessMixin:
     permission_classes = [AuditoriaRolePermission]
     admin_write_only = False
@@ -72,7 +99,7 @@ class AuditoriaAccessMixin:
             return queryset.filter(**filters).distinct()
 
         if self.queryset.model == Auditoria:
-            return queryset.filter(auditoriaauditor__auditor=user, auditoriaauditor__activo=True).distinct()
+            return auditorias_visibles_para_usuario(user)
 
         if self.queryset.model == UnidadAuditada:
             return queryset
@@ -296,3 +323,69 @@ class NotificacionAlertaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
         alerta.leida = True
         alerta.save(update_fields=["leida"])
         return Response(self.get_serializer(alerta).data)
+
+
+class DashboardResumenView(APIView):
+    permission_classes = [AuditoriaRolePermission]
+
+    @extend_schema(
+        responses=OpenApiTypes.OBJECT,
+        summary="Resumen del dashboard",
+        description="Estadísticas agregadas según el alcance del usuario autenticado.",
+    )
+    def get(self, request):
+        user = request.user
+        auditorias = auditorias_visibles_para_usuario(user)
+        hoy = timezone.localdate()
+        proxima_semana = hoy + timedelta(days=7)
+        acciones = AccionMejoramiento.objects.filter(plan__auditoria__in=auditorias)
+        hallazgos = Hallazgo.objects.filter(auditoria__in=auditorias)
+        informe_preliminar = Informe.objects.filter(
+            auditoria=OuterRef("pk"),
+            tipo_informe__iexact="preliminar",
+        )
+        informe_definitivo = Informe.objects.filter(
+            auditoria=OuterRef("pk"),
+            tipo_informe__iexact="definitivo",
+        )
+
+        resumen = {
+            "total_auditorias_activas": auditorias.exclude(estado="Cerrada").count(),
+            "auditorias_por_estado": {
+                item["estado"]: item["total"]
+                for item in auditorias.values("estado").annotate(total=Count("id")).order_by("estado")
+            },
+            "alertas_pendientes": NotificacionAlerta.objects.filter(usuario=user, leida=False).count(),
+            "acciones_vencidas": acciones.filter(estado="Vencida").count(),
+            "acciones_proximas_vencer": acciones.filter(
+                fecha_limite__range=(hoy, proxima_semana),
+            ).exclude(estado__in=("Vencida", *ESTADOS_ACCION_FINALIZADA)).count(),
+            "acciones_sin_seguimiento": acciones.filter(seguimientoaccion__isnull=True).count(),
+            "hallazgos_abiertos": hallazgos.exclude(estado=ESTADO_HALLAZGO_CERRADO).count(),
+            "hallazgos_sin_accion": hallazgos.filter(accionmejoramiento__isnull=True).count(),
+            "auditorias_preliminar_sin_definitivo": auditorias.filter(
+                Exists(informe_preliminar),
+            ).filter(~Exists(informe_definitivo)).count(),
+        }
+
+        es_administrador = user.is_superuser or user.groups.filter(name="Administrador").exists()
+        es_auditor = user.groups.filter(name="Auditor").exists()
+
+        if es_administrador:
+            roles = ("Administrador", "Auditor", "Usuario consulta")
+            conteos_roles = {
+                item["name"]: item["total"]
+                for item in Group.objects.filter(name__in=roles)
+                .values("name")
+                .annotate(total=Count("user"))
+            }
+            resumen["usuarios_por_rol"] = {role: conteos_roles.get(role, 0) for role in roles}
+            resumen["unidades_activas"] = UnidadAuditada.objects.filter(activo=True).count()
+            resumen["unidades_inactivas"] = UnidadAuditada.objects.filter(activo=False).count()
+
+        if es_auditor and not es_administrador:
+            resumen["mis_auditorias"] = list(
+                auditorias.values("id", "codigo", "estado").order_by("codigo")
+            )
+
+        return Response(resumen)

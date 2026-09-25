@@ -1,3 +1,4 @@
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
@@ -5,6 +6,7 @@ from .views import (
     AuditoriaAuditorViewSet,
     AuditoriaViewSet,
     CronogramaActividadesViewSet,
+    DashboardResumenView,
     DocumentoGeneradoViewSet,
     HallazgoViewSet,
     HistorialCambioViewSet,
@@ -33,4 +35,6 @@ router.register("seguimientos", SeguimientoAccionViewSet)
 router.register("documentos", DocumentoGeneradoViewSet)
 router.register("notificaciones", NotificacionAlertaViewSet)
 
-urlpatterns = router.urls
+urlpatterns = [
+    path("dashboard/resumen/", DashboardResumenView.as_view(), name="dashboard-resumen"),
+] + router.urls

@@ -75,46 +75,53 @@ onMounted(cargarAlertas)
 
 <style scoped>
 .sidebar {
-  width: 210px;
+  width: 224px;
   flex-shrink: 0;
   background: var(--sidebar-bg);
   color: var(--sidebar-text);
-  padding: 24px 16px;
+  padding: 26px 14px 20px;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
 }
 .brand {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin-bottom: 24px;
-  padding-bottom: 18px;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 0 4px 18px;
   border-bottom: 1px solid var(--sidebar-line);
 }
-.brand img { height: 26px; width: auto; flex-shrink: 0; }
-.brand .txt { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; line-height: 1.35; color: #8494A5; }
-.brand .txt strong { display: block; color: #DCE3EA; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; }
+.brand img { height: 29px; width: auto; flex-shrink: 0; }
+.brand .txt { font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 1.45; color: #8494A5; }
+.brand .txt strong { display: block; color: #F3F5F7; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.01em; }
 
 nav { display: flex; flex-direction: column; }
 nav a {
+  position: relative;
   display: block;
-  padding: 9px 10px;
+  padding: 8px 10px 8px 14px;
   font-size: 13px;
   color: var(--sidebar-text);
   text-decoration: none;
   border-radius: var(--radius);
-  margin-bottom: 2px;
+  margin-bottom: 3px;
+  transition: background-color 150ms ease, color 150ms ease;
 }
+nav a::before { content: ''; position: absolute; left: 5px; top: 50%; width: 3px; height: 3px; background: #617386; transform: translateY(-50%); }
+nav a:hover { background: rgba(255, 255, 255, 0.045); color: #fff; }
 nav a.router-link-active { background: var(--sidebar-hover); color: #fff; font-weight: 500; }
+nav a.router-link-active::before { height: 17px; background: var(--accent); }
 
 .user-chip {
-  margin-top: 28px;
+  margin-top: 30px;
   padding-top: 16px;
   border-top: 1px solid var(--sidebar-line);
   font-size: 12px;
 }
 .alertas { position: relative; margin-bottom: 16px; }
-.alerts-button { width: 100%; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--sidebar-line); background: transparent; color: var(--sidebar-text); cursor: pointer; font-size: 12px; padding: 7px 8px; }
+.alerts-button { width: 100%; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--sidebar-line); background: rgba(255, 255, 255, 0.025); color: var(--sidebar-text); cursor: pointer; font-size: 12px; padding: 8px 9px; transition: border-color 150ms ease, background-color 150ms ease; }
+.alerts-button:hover { border-color: #51667C; background: rgba(255, 255, 255, 0.06); }
 .alerts-count { min-width: 18px; border-radius: 9px; background: var(--warn); color: #fff; font-size: 11px; line-height: 18px; text-align: center; }
-.alerts-panel { position: absolute; z-index: 2; bottom: calc(100% + 6px); left: 0; width: 260px; max-height: 280px; overflow-y: auto; border: 1px solid var(--sidebar-line); background: var(--sidebar-bg); padding: 8px; }
+.alerts-panel { position: absolute; z-index: 2; bottom: calc(100% + 7px); left: 0; width: 270px; max-height: 280px; overflow-y: auto; border: 1px solid #40566B; box-shadow: 0 12px 28px rgba(7, 15, 24, 0.28); background: var(--sidebar-bg); padding: 8px; }
 .alerts-empty { margin: 6px; color: #8494A5; font-size: 12px; }.alert-item { display: flex; flex-direction: column; gap: 5px; border-bottom: 1px solid var(--sidebar-line); padding: 9px 4px; font-size: 12px; }.alert-item:last-child { border-bottom: 0; }.alert-item strong { color: #F1E4CC; }.alert-item span { color: var(--sidebar-text); line-height: 1.35; }.alert-item button { align-self: flex-start; border: 0; background: none; color: #9FC6AE; cursor: pointer; font-size: 11px; padding: 0; }
 .role-tag {
   display: inline-block;
@@ -123,7 +130,8 @@ nav a.router-link-active { background: var(--sidebar-hover); color: #fff; font-w
   font-size: 11px;
   background: var(--accent-soft);
   color: #6B4E1F;
-  padding: 2px 7px;
+  padding: 3px 7px;
+  letter-spacing: 0.02em;
   border-radius: 2px;
 }
 .logout-link {
@@ -136,5 +144,6 @@ nav a.router-link-active { background: var(--sidebar-hover); color: #fff; font-w
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
 </style>

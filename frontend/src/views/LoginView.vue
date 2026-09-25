@@ -77,7 +77,7 @@ async function handleSubmit() {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 32px 24px;
 }
 .login-card {
   width: 100%;
@@ -85,15 +85,18 @@ async function handleSubmit() {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 40px 36px;
+  padding: 42px 38px 34px;
+  box-shadow: var(--shadow-subtle);
 }
 .brand-lockup {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 22px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
 }
-.brand-lockup img { height: 40px; width: auto; display: block; }
+.brand-lockup img { height: 43px; width: auto; display: block; }
 .uni-name {
   font-size: 12.5px;
   line-height: 1.3;
@@ -101,7 +104,7 @@ async function handleSubmit() {
   font-weight: 500;
 }
 .uni-name strong { display: block; color: var(--ink); font-weight: 600; font-size: 13px; }
-h1 { font-size: 22px; font-weight: 600; margin: 0 0 28px; line-height: 1.3; }
+h1 { font-size: 23px; font-weight: 600; margin: 0 0 28px; line-height: 1.3; letter-spacing: 0; }
 .field { margin-bottom: 18px; }
 .field label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; }
 .field input {
@@ -114,7 +117,8 @@ h1 { font-size: 22px; font-weight: 600; margin: 0 0 28px; line-height: 1.3; }
   color: var(--ink);
 }
 .field input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-.error-msg { color: var(--warn); font-size: 13px; margin: -6px 0 14px; }
+.field input:hover { border-color: #C8C1B5; }
+.error-msg { color: var(--warn); font-size: 13px; margin: -6px 0 14px; background: var(--warn-soft); border-left: 2px solid var(--warn); padding: 8px 10px; }
 .login-submit {
   width: 100%;
   padding: 11px;
@@ -126,7 +130,10 @@ h1 { font-size: 22px; font-weight: 600; margin: 0 0 28px; line-height: 1.3; }
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  box-shadow: 0 2px 0 rgba(10, 20, 31, 0.18);
+  transition: background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
 }
+.login-submit:hover:not(:disabled) { background: #26394D; box-shadow: 0 4px 10px rgba(29, 43, 58, 0.14); transform: translateY(-1px); }
 .login-submit:disabled { opacity: 0.6; cursor: default; }
 .login-foot {
   margin-top: 20px;

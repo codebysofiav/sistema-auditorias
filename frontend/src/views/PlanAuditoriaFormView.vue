@@ -54,7 +54,7 @@ onMounted(cargar)
 
 <template>
   <div class="shell"><AppSidebar /><main class="main">
-    <button class="btn-back" @click="router.push({ name: esEdicion ? 'plan-auditoria-detalle' : 'planeacion', params: { id: route.params.id } })">Volver</button>
+    <button class="btn-back" @click="router.push({ name: esEdicion ? 'plan-auditoria-detalle' : 'planeacion', params: { id: route.params.id } })">← Volver</button>
     <h1>{{ esEdicion ? 'Editar plan de auditoría' : 'Nuevo plan de auditoría' }}</h1>
     <p v-if="loading" class="empty-note">Cargando...</p>
     <form v-else class="form-card" @submit.prevent="guardar">

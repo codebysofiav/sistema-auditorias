@@ -64,7 +64,7 @@ async function eliminarUsuario(usuario) {
       <div class="head">
         <h1>Usuarios</h1>
         <button class="btn-primary" @click="router.push({ name: 'usuario-nuevo' })">
-          Nuevo usuario
+          + Nuevo usuario
         </button>
       </div>
 

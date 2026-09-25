@@ -44,7 +44,7 @@ onMounted(cargar)
           <h1>Planeación de auditorías</h1>
           <p class="sub">{{ puedeEscribir ? 'Planes de sus auditorías disponibles.' : 'Listado en modo solo lectura.' }}</p>
         </div>
-        <button v-if="puedeEscribir" class="btn-primary" @click="router.push({ name: 'plan-auditoria-nuevo' })">Nuevo plan</button>
+        <button v-if="puedeEscribir" class="btn-primary" @click="router.push({ name: 'plan-auditoria-nuevo' })">+ Nuevo plan</button>
       </div>
 
       <p v-if="loading" class="empty-note">Cargando...</p>
