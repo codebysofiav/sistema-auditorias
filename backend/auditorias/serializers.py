@@ -27,7 +27,7 @@ class UnidadAuditadaSerializer(serializers.ModelSerializer):
 class AuditoriaSerializer(serializers.ModelSerializer):
     equipo_auditor = serializers.PrimaryKeyRelatedField(
         many=True,
-        queryset=Usuario.objects.filter(groups__name="Auditor"),
+        queryset=Usuario.objects.filter(groups__name__in=("Auditor", "Director")).distinct(),
         required=False,
         write_only=True,
     )
@@ -61,6 +61,10 @@ class AuditoriaSerializer(serializers.ModelSerializer):
 
 
 class AuditoriaAuditorSerializer(serializers.ModelSerializer):
+    auditor = serializers.PrimaryKeyRelatedField(
+        queryset=Usuario.objects.filter(groups__name__in=("Auditor", "Director")).distinct()
+    )
+
     class Meta:
         model = AuditoriaAuditor
         fields = "__all__"
@@ -70,7 +74,53 @@ class InformeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Informe
         fields = "__all__"
-        read_only_fields = ["creado_por", "fecha_creacion"]
+        read_only_fields = [
+            "creado_por",
+            "fecha_creacion",
+            "estado",
+            "revisado_por",
+            "fecha_revision",
+            "observaciones_revision",
+        ]
+
+    def validate(self, attrs):
+        tipo_informe = attrs.get("tipo_informe", getattr(self.instance, "tipo_informe", ""))
+        auditoria = attrs.get("auditoria", getattr(self.instance, "auditoria", None))
+
+        if tipo_informe.lower() == "definitivo" and auditoria:
+            preliminar_aprobado = Informe.objects.filter(
+                auditoria=auditoria,
+                tipo_informe__iexact="preliminar",
+                estado=Informe.EstadoRevision.APROBADO,
+            )
+            if self.instance:
+                preliminar_aprobado = preliminar_aprobado.exclude(pk=self.instance.pk)
+            if not preliminar_aprobado.exists():
+                raise serializers.ValidationError(
+                    {
+                        "tipo_informe": (
+                            "Solo puede crear un informe definitivo cuando exista un "
+                            "informe preliminar aprobado para esta auditoría."
+                        )
+                    }
+                )
+
+        return attrs
+
+    def create(self, validated_data):
+        if validated_data.get("tipo_informe", "").lower() == "preliminar":
+            validated_data["estado"] = Informe.EstadoRevision.PENDIENTE
+        return super().create(validated_data)
+
+
+class RevisionInformeSerializer(serializers.Serializer):
+    estado = serializers.ChoiceField(
+        choices=(
+            Informe.EstadoRevision.APROBADO,
+            Informe.EstadoRevision.CORRECCIONES,
+        )
+    )
+    observaciones_revision = serializers.CharField(required=False, allow_blank=True)
 
 
 class HallazgoSerializer(serializers.ModelSerializer):

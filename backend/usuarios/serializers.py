@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from .models import Usuario
 
 
-ROLES_GESTIONABLES = ("Administrador", "Auditor", "Usuario consulta")
+ROLES_GESTIONABLES = ("Administrador", "Auditor", "Director", "Usuario consulta")
 
 
 class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):

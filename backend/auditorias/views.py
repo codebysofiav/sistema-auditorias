@@ -6,7 +6,7 @@ from django.utils import timezone
 from drf_spectacular.utils import OpenApiTypes, extend_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -40,6 +40,7 @@ from .serializers import (
     OportunidadMejoraSerializer,
     PlanAuditoriaSerializer,
     PlanMejoramientoSerializer,
+    RevisionInformeSerializer,
     SeguimientoAccionSerializer,
     UnidadAuditadaSerializer,
 )
@@ -50,7 +51,9 @@ ESTADO_HALLAZGO_CERRADO = "Cerrado"
 
 
 def auditorias_visibles_para_usuario(user):
-    if user.is_superuser or user.groups.filter(name="Administrador").exists():
+    if user.is_superuser or user.groups.filter(
+        name__in=("Administrador", "Director")
+    ).exists():
         return Auditoria.objects.all()
 
     if user.groups.filter(name="Usuario consulta").exists():
@@ -78,13 +81,15 @@ class AuditoriaAccessMixin:
         if not user or not user.is_authenticated:
             return queryset.none()
 
-        if user.is_superuser or user.groups.filter(name="Administrador").exists():
+        if user.is_superuser or user.groups.filter(
+            name__in=("Administrador", "Director")
+        ).exists():
             return queryset
 
         if user.groups.filter(name="Usuario consulta").exists():
             return queryset
 
-        if not user.groups.filter(name="Auditor").exists():
+        if not user.groups.filter(name__in=("Auditor", "Director")).exists():
             return queryset.none()
 
         auditoria_filter = getattr(self, "auditoria_filter", None)
@@ -127,12 +132,16 @@ class AuditoriaAccessMixin:
         if user.groups.filter(name="Usuario consulta").exists():
             return False
 
-        if not user.groups.filter(name="Auditor").exists():
+        es_auditor = user.groups.filter(name="Auditor").exists()
+        es_director = user.groups.filter(name="Director").exists()
+        if not es_auditor and not es_director:
             return False
 
         model = self.queryset.model
 
         if model in (Auditoria, UnidadAuditada):
+            if es_director and not es_auditor:
+                return False
             return True
 
         auditoria_id = self.request.data.get("auditoria")
@@ -218,6 +227,48 @@ class InformeViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     queryset = Informe.objects.all()
     serializer_class = InformeSerializer
     autor_field = "creado_por"
+
+    def update(self, request, *args, **kwargs):
+        campos_revision = {
+            "estado",
+            "revisado_por",
+            "fecha_revision",
+            "observaciones_revision",
+        }
+        if campos_revision.intersection(request.data):
+            raise ValidationError(
+                "Los campos de revisión solo pueden cambiarse mediante la acción revisar."
+            )
+        return super().update(request, *args, **kwargs)
+
+    @action(detail=True, methods=["post"], url_path="revisar")
+    def revisar(self, request, pk=None):
+        informe = self.get_object()
+        es_revisor = request.user.is_superuser or request.user.groups.filter(
+            name__in=("Administrador", "Director")
+        ).exists()
+        if not es_revisor:
+            raise PermissionDenied("Solo un Director o Administrador puede revisar informes.")
+        if informe.tipo_informe.lower() != "preliminar":
+            raise ValidationError("Solo los informes preliminares pueden revisarse.")
+
+        serializer = RevisionInformeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        informe.estado = serializer.validated_data["estado"]
+        informe.observaciones_revision = serializer.validated_data.get(
+            "observaciones_revision", ""
+        )
+        informe.revisado_por = request.user
+        informe.fecha_revision = timezone.localdate()
+        informe.save(
+            update_fields=(
+                "estado",
+                "observaciones_revision",
+                "revisado_por",
+                "fecha_revision",
+            )
+        )
+        return Response(self.get_serializer(informe).data)
 
 class HallazgoViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     auditoria_filter = "auditoria__auditoriaauditor__auditor"

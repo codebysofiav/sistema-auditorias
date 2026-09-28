@@ -41,12 +41,14 @@ class AuditoriaRolePermission(permissions.BasePermission):
     Permiso base por roles de Django Groups.
 
     - Administrador: acceso completo.
-    - Auditor: lectura y escritura.
+    - Auditor: lectura y escritura sobre auditorías asignadas.
+    - Director: lectura global y escritura sobre auditorías asignadas.
     - Usuario consulta: solo lectura.
     """
 
     admin_group = "Administrador"
     auditor_group = "Auditor"
+    director_group = "Director"
     consulta_group = "Usuario consulta"
 
     def has_permission(self, request, view):
@@ -59,9 +61,13 @@ class AuditoriaRolePermission(permissions.BasePermission):
             return True
 
         if request.method in permissions.SAFE_METHODS:
-            return user_in_group(user, self.auditor_group, self.consulta_group)
+            return user_in_group(
+                user, self.auditor_group, self.director_group, self.consulta_group
+            )
 
-        return user_in_group(user, self.auditor_group)
+        # La autorización definitiva de escritura para Director se determina
+        # por objeto, según su asignación activa a la auditoría.
+        return user_in_group(user, self.auditor_group, self.director_group)
 
     def has_object_permission(self, request, view, obj):
         user = request.user
@@ -74,6 +80,13 @@ class AuditoriaRolePermission(permissions.BasePermission):
 
         if user_in_group(user, self.consulta_group):
             return request.method in permissions.SAFE_METHODS
+
+        if user_in_group(user, self.director_group):
+            if request.method in permissions.SAFE_METHODS:
+                return True
+            if getattr(view, "action", None) == "revisar":
+                return True
+            return auditor_is_assigned(user, get_auditoria_from_object(obj))
 
         if user_in_group(user, self.auditor_group):
             auditoria = get_auditoria_from_object(obj)

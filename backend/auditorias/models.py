@@ -37,6 +37,11 @@ class AuditoriaAuditor(models.Model):
         return f"{self.auditor} asignado a {self.auditoria}"
 
 class Informe(models.Model):
+    class EstadoRevision(models.TextChoices):
+        PENDIENTE = "Pendiente de revisión", "Pendiente de revisión"
+        CORRECCIONES = "Requiere correcciones", "Requiere correcciones"
+        APROBADO = "Aprobado", "Aprobado"
+
     auditoria = models.ForeignKey(Auditoria, on_delete=models.CASCADE)
     tipo_informe = models.CharField(max_length=50)
     fecha_informe = models.DateField(null=True, blank=True)
@@ -46,6 +51,20 @@ class Informe(models.Model):
     evidencias = models.TextField(blank=True, null=True)
     creado_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(
+        max_length=30,
+        choices=EstadoRevision.choices,
+        default=EstadoRevision.PENDIENTE,
+    )
+    revisado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="informes_revisados",
+    )
+    fecha_revision = models.DateField(null=True, blank=True)
+    observaciones_revision = models.TextField(blank=True)
 
     def __str__(self):
         return f"Informe de {self.auditoria} - {self.fecha_informe}"

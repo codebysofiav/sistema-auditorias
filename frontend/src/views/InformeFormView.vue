@@ -3,12 +3,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import apiClient from '@/api/client'
 import AppSidebar from '@/components/AppSidebar.vue'
+import { useAuthStore } from '@/stores/auth'
 
 // Según la documentación del proyecto, solo existen estos dos tipos.
 const TIPOS_INFORME = ['Preliminar', 'Definitivo']
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 
 const esEdicion = computed(() => !!route.params.id)
 
@@ -16,6 +18,9 @@ const auditorias = ref([])
 const loading = ref(true)
 const guardando = ref(false)
 const errorMsg = ref('')
+const informeRevision = ref(null)
+const informes = ref([])
+const asignaciones = ref([])
 
 const form = ref({
   auditoria: '',
@@ -32,6 +37,15 @@ async function cargarAuditorias() {
   auditorias.value = data.results ?? data
 }
 
+async function cargarContexto() {
+  const [informesRes, asignacionesRes] = await Promise.all([
+    apiClient.get('/informes/'),
+    apiClient.get('/auditoria-auditores/'),
+  ])
+  informes.value = informesRes.data.results ?? informesRes.data
+  asignaciones.value = asignacionesRes.data.results ?? asignacionesRes.data
+}
+
 async function cargarInforme() {
   const { data } = await apiClient.get(`/informes/${route.params.id}/`)
   form.value = {
@@ -43,12 +57,33 @@ async function cargarInforme() {
     observaciones: data.observaciones,
     evidencias: data.evidencias,
   }
+  informeRevision.value = data
 }
+
+const directorAsignado = computed(() => auth.isDirector && asignaciones.value.some(
+  (asignacion) => asignacion.auditoria === Number(form.value.auditoria)
+    && asignacion.auditor === auth.user?.id
+    && asignacion.activo,
+))
+const puedeEditar = computed(() => auth.isAdmin || auth.isAuditor || directorAsignado.value)
+const puedeCrearDefinitivo = computed(() => {
+  if (form.value.tipo_informe.toLowerCase() !== 'definitivo') return true
+  return informes.value.some((informe) => informe.auditoria === Number(form.value.auditoria)
+    && informe.tipo_informe?.toLowerCase() === 'preliminar'
+    && informe.estado === 'Aprobado')
+})
+const auditoriasDisponibles = computed(() => {
+  if (!auth.isDirector) return auditorias.value
+  const ids = new Set(asignaciones.value.filter(
+    (asignacion) => asignacion.auditor === auth.user?.id && asignacion.activo,
+  ).map((asignacion) => asignacion.auditoria))
+  return auditorias.value.filter((auditoria) => ids.has(auditoria.id))
+})
 
 onMounted(async () => {
   loading.value = true
   try {
-    await cargarAuditorias()
+    await Promise.all([cargarAuditorias(), cargarContexto()])
     if (esEdicion.value) {
       await cargarInforme()
     }
@@ -63,6 +98,10 @@ async function guardar() {
   guardando.value = true
   errorMsg.value = ''
   try {
+    if (!puedeCrearDefinitivo.value) {
+      errorMsg.value = 'El informe definitivo requiere un informe preliminar aprobado.'
+      return
+    }
     if (esEdicion.value) {
       await apiClient.patch(`/informes/${route.params.id}/`, form.value)
     } else {
@@ -96,14 +135,14 @@ async function guardar() {
         <div class="grid-2">
           <div class="field">
             <label>Auditoría</label>
-            <select v-model="form.auditoria" required :disabled="esEdicion">
+            <select v-model="form.auditoria" required :disabled="esEdicion || !puedeEditar">
               <option value="" disabled>Seleccione una auditoría</option>
-              <option v-for="a in auditorias" :key="a.id" :value="a.id">{{ a.codigo }}</option>
+              <option v-for="a in auditoriasDisponibles" :key="a.id" :value="a.id">{{ a.codigo }}</option>
             </select>
           </div>
           <div class="field">
             <label>Tipo de informe</label>
-            <select v-model="form.tipo_informe" required>
+            <select v-model="form.tipo_informe" required :disabled="esEdicion || !puedeEditar">
               <option v-for="t in TIPOS_INFORME" :key="t" :value="t">{{ t }}</option>
             </select>
           </div>
@@ -111,30 +150,33 @@ async function guardar() {
 
         <div class="field">
           <label>Fecha del informe</label>
-          <input v-model="form.fecha_informe" type="date" required />
+          <input v-model="form.fecha_informe" type="date" required :disabled="!puedeEditar" />
         </div>
 
         <div class="field">
           <label>Actividades realizadas</label>
-          <textarea v-model="form.actividades_realizadas" rows="3" required></textarea>
+          <textarea v-model="form.actividades_realizadas" rows="3" required :disabled="!puedeEditar"></textarea>
         </div>
 
         <div class="field">
           <label>Conclusiones</label>
-          <textarea v-model="form.conclusiones" rows="3" required></textarea>
+          <textarea v-model="form.conclusiones" rows="3" required :disabled="!puedeEditar"></textarea>
         </div>
 
         <div class="field">
           <label>Observaciones</label>
-          <textarea v-model="form.observaciones" rows="2"></textarea>
+          <textarea v-model="form.observaciones" rows="2" :disabled="!puedeEditar"></textarea>
         </div>
 
         <div class="field">
           <label>Evidencias (ubicación o referencia)</label>
-          <input v-model="form.evidencias" type="text" placeholder="Carpeta compartida / enlace" />
+          <input v-model="form.evidencias" type="text" placeholder="Carpeta compartida / enlace" :disabled="!puedeEditar" />
         </div>
 
-        <button type="submit" class="btn-primary" :disabled="guardando">
+        <p v-if="!esEdicion && form.tipo_informe === 'Definitivo' && !puedeCrearDefinitivo" class="error-msg">Debe existir un informe preliminar aprobado para crear el informe definitivo.</p>
+        <section v-if="informeRevision?.tipo_informe === 'Preliminar' && informeRevision?.estado === 'Requiere correcciones'" class="review-note"><strong>Requiere correcciones</strong><p>{{ informeRevision.observaciones_revision || 'El Director no registró observaciones.' }}</p></section>
+
+        <button v-if="puedeEditar" type="submit" class="btn-primary" :disabled="guardando || !puedeCrearDefinitivo">
           {{ guardando ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Crear informe' }}
         </button>
       </form>
@@ -158,4 +200,5 @@ async function guardar() {
 .btn-primary { background: var(--ink); color: #F6F5F2; border: none; border-radius: var(--radius); padding: 10px 18px; font-size: 13px; font-weight: 500; cursor: pointer; }
 .btn-primary:disabled { opacity: 0.6; cursor: default; }
 .empty-note { font-size: 12px; color: var(--ink-soft); padding: 18px 14px; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); }
+.review-note { background: var(--warn-soft); border-left: 3px solid var(--warn); font-size: 13px; margin: 0 0 16px; padding: 12px; }.review-note p { margin: 5px 0 0; white-space: pre-line; }
 </style>

@@ -5,7 +5,7 @@ import apiClient from '@/api/client'
 import AppSidebar from '@/components/AppSidebar.vue'
 
 // Valores exactos que acepta el backend (UsuarioCreateSerializer.rol)
-const ROLES = ['Administrador', 'Auditor', 'Usuario consulta']
+const ROLES = ['Administrador', 'Auditor', 'Director', 'Usuario consulta']
 
 const router = useRouter()
 const route = useRoute()

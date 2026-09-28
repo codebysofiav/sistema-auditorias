@@ -22,7 +22,10 @@ const router = useRouter()
 const auth = useAuthStore()
 
 const esEdicion = computed(() => !!route.params.id)
-const puedeEditarAuditoria = computed(() => auth.isAdmin || auth.isAuditor)
+const directorAsignado = computed(() => auth.isDirector && equipo.value.some(
+  (asignacion) => asignacion.auditor === auth.user?.id && asignacion.activo,
+))
+const puedeEditarAuditoria = computed(() => auth.isAdmin || auth.isAuditor || directorAsignado.value)
 const puedeDefinirEquipoAlCrear = computed(() => !esEdicion.value && puedeEditarAuditoria.value)
 const puedeGestionarEquipo = computed(() => esEdicion.value && auth.isAdmin)
 
@@ -259,7 +262,7 @@ async function guardar() {
         </div>
 
         <section v-if="puedeDefinirEquipoAlCrear" class="team-section">
-          <div class="section-heading"><div><h2>Equipo auditor</h2><p>Seleccione los usuarios con rol Auditor que participarán en esta auditoría.</p></div><span class="team-count">{{ auditoresSeleccionados.length }} seleccionados</span></div>
+          <div class="section-heading"><div><h2>Equipo auditor</h2><p>Seleccione los usuarios con rol Auditor o Director que participarán en esta auditoría.</p></div><span class="team-count">{{ auditoresSeleccionados.length }} seleccionados</span></div>
           <input v-model="busquedaAuditor" class="auditor-search" type="search" placeholder="Buscar por nombre o correo" />
           <p v-if="auditoresFiltrados.length === 0" class="empty-team">No se encontraron auditores disponibles.</p>
           <div v-else class="auditor-picker">

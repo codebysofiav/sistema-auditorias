@@ -73,7 +73,9 @@ class UsuarioListView(generics.ListAPIView):
 class AuditorDisponibleListView(generics.ListAPIView):
     """Directorio seguro para formar o visualizar equipos auditores."""
 
-    queryset = Usuario.objects.filter(groups__name="Auditor").order_by("email").distinct()
+    queryset = Usuario.objects.filter(
+        groups__name__in=("Auditor", "Director")
+    ).order_by("email").distinct()
     serializer_class = UsuarioSerializer
     permission_classes = [IsAuthenticated]
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '@/api/client'
 import { useAuthStore } from '@/stores/auth'
@@ -13,7 +13,11 @@ const auditoriasPorId = ref({})
 const loading = ref(true)
 const errorMsg = ref('')
 
-const puedeEscribir = auth.isAdmin || auth.isAuditor
+const puedeEscribir = computed(() => auth.isAdmin || auth.isAuditor)
+const puedeRevisar = computed(() => auth.isAdmin || auth.isDirector)
+const revisandoId = ref(null)
+const observacionesRevision = ref('')
+const guardandoRevision = ref(false)
 
 async function cargar() {
   loading.value = true
@@ -33,6 +37,38 @@ async function cargar() {
   }
 }
 
+function esPreliminar(informe) {
+  return informe.tipo_informe?.toLowerCase() === 'preliminar'
+}
+
+function iniciarRevision(informe) {
+  revisandoId.value = informe.id
+  observacionesRevision.value = informe.observaciones_revision ?? ''
+}
+
+function cancelarRevision() {
+  revisandoId.value = null
+  observacionesRevision.value = ''
+}
+
+async function revisar(informe, estado) {
+  guardandoRevision.value = true
+  errorMsg.value = ''
+  try {
+    await apiClient.post(`/informes/${informe.id}/revisar/`, {
+      estado,
+      observaciones_revision: observacionesRevision.value,
+    })
+    await cargar()
+    cancelarRevision()
+  } catch (err) {
+    errorMsg.value = err.response?.data?.detail
+      ?? 'No se pudo registrar la revisión del informe.'
+  } finally {
+    guardandoRevision.value = false
+  }
+}
+
 onMounted(cargar)
 </script>
 
@@ -45,7 +81,7 @@ onMounted(cargar)
         <div>
           <h1>Informes</h1>
           <p class="sub">
-            {{ auth.isAdmin ? 'Todos los informes registrados.' : puedeEscribir ? 'Informes de sus auditorías asignadas.' : 'Listado en modo solo lectura.' }}
+            {{ auth.isAdmin || auth.isDirector ? 'Todos los informes registrados.' : puedeEscribir ? 'Informes de sus auditorías asignadas.' : 'Listado en modo solo lectura.' }}
           </p>
         </div>
         <button v-if="puedeEscribir" class="btn-primary" @click="router.push({ name: 'informe-nuevo' })">
@@ -64,6 +100,7 @@ onMounted(cargar)
           <tr>
             <th>Auditoría</th>
             <th>Tipo</th>
+            <th>Revisión</th>
             <th>Fecha</th>
             <th></th>
           </tr>
@@ -72,11 +109,16 @@ onMounted(cargar)
           <tr v-for="i in informes" :key="i.id">
             <td class="code">{{ auditoriasPorId[i.auditoria] ?? i.auditoria }}</td>
             <td>{{ i.tipo_informe }}</td>
+            <td><span v-if="esPreliminar(i)" class="status-tag" :class="i.estado === 'Aprobado' ? 'status-ok' : i.estado === 'Requiere correcciones' ? 'status-warn' : ''">{{ i.estado }}</span><span v-else>—</span></td>
             <td class="code">{{ i.fecha_informe }}</td>
             <td class="actions-cell">
               <button class="btn-link" @click="router.push({ name: 'informe-detalle', params: { id: i.id } })">
                 {{ puedeEscribir ? 'Ver / Editar' : 'Ver' }}
               </button>
+              <template v-if="puedeRevisar && esPreliminar(i) && i.estado === 'Pendiente de revisión'">
+                <button v-if="revisandoId !== i.id" class="btn-review" @click="iniciarRevision(i)">Revisar</button>
+                <div v-else class="review-form"><textarea v-model="observacionesRevision" rows="2" placeholder="Observaciones de revisión"></textarea><div><button class="btn-approve" :disabled="guardandoRevision" @click="revisar(i, 'Aprobado')">Aprobar</button><button class="btn-correct" :disabled="guardandoRevision" @click="revisar(i, 'Requiere correcciones')">Solicitar correcciones</button><button class="btn-link" :disabled="guardandoRevision" @click="cancelarRevision">Cancelar</button></div></div>
+              </template>
             </td>
           </tr>
         </tbody>
@@ -98,6 +140,6 @@ td { padding: 11px 14px; font-size: 13px; border-bottom: 1px solid var(--line); 
 tr:last-child td { border-bottom: none; }
 .code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); }
 .actions-cell { text-align: right; }
-.btn-link { background: none; border: 1px solid var(--line); border-radius: var(--radius); padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--ink); }
+.btn-link, .btn-review, .btn-approve, .btn-correct { background: none; border: 1px solid var(--line); border-radius: var(--radius); padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--ink); }.btn-review { background: var(--accent-soft); border-color: var(--accent); }.btn-approve { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }.btn-correct { color: var(--warn); }.status-tag { background: var(--accent-soft); display: inline-block; font-size: 11px; padding: 3px 6px; }.status-ok { background: var(--ok-soft); color: var(--ok); }.status-warn { background: var(--warn-soft); color: var(--warn); }.review-form { display: grid; gap: 7px; margin-top: 8px; min-width: 250px; }.review-form textarea { border: 1px solid var(--line); font: inherit; font-size: 12px; padding: 7px; resize: vertical; width: 100%; }.review-form div { display: flex; flex-wrap: wrap; gap: 5px; }
 .empty-note { font-size: 12px; color: var(--ink-soft); padding: 18px 14px; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); }
 </style>
