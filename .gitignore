@@ -21,3 +21,6 @@ dist-ssr/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Log de alertas de vencimiento
+backend/alertas.log

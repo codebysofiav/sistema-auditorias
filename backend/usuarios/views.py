@@ -70,6 +70,14 @@ class UsuarioListView(generics.ListAPIView):
     permission_classes = [EsAdministrador]
 
 
+class AuditorDisponibleListView(generics.ListAPIView):
+    """Directorio seguro para formar o visualizar equipos auditores."""
+
+    queryset = Usuario.objects.filter(groups__name="Auditor").order_by("email").distinct()
+    serializer_class = UsuarioSerializer
+    permission_classes = [IsAuthenticated]
+
+
 class UsuarioDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Usuario.objects.all()
     permission_classes = [EsAdministrador]

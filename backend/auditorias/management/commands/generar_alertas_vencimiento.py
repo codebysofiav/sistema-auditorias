@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.core.management.base import BaseCommand
+from django.db.models import Prefetch
 from django.utils import timezone
 
 from auditorias.models import AccionMejoramiento, AuditoriaAuditor, NotificacionAlerta
@@ -24,39 +25,46 @@ class Command(BaseCommand):
         proximas = acciones_activas.filter(fecha_limite=fecha_alerta).exclude(estado="Vencida")
         creadas = 0
 
-        for accion in proximas.select_related("hallazgo__auditoria"):
-            auditor = (
-                AuditoriaAuditor.objects.filter(
-                    auditoria=accion.hallazgo.auditoria,
-                    activo=True,
-                )
-                .select_related("auditor")
-                .order_by("fecha_asignacion")
-                .first()
+        for accion in proximas.select_related("hallazgo__auditoria").prefetch_related(
+            Prefetch(
+                "hallazgo__auditoria__auditoriaauditor_set",
+                queryset=AuditoriaAuditor.objects.filter(activo=True).select_related("auditor"),
+                to_attr="auditores_activos",
             )
+        ):
+            auditores_activos = accion.hallazgo.auditoria.auditores_activos
 
-            if auditor is None:
+            if not auditores_activos:
                 continue
 
             mensaje = (
                 f"La acción de mejora '{accion.descripcion}' vence el "
                 f"{accion.fecha_limite.isoformat()}."
             )
-            existe = NotificacionAlerta.objects.filter(
-                accion=accion,
-                usuario=auditor.auditor,
-                tipo_alerta=TIPO_ALERTA_VENCIMIENTO,
-                mensaje=mensaje,
-            ).exists()
+            usuarios_notificados = set()
+            for asignacion in auditores_activos:
+                usuario = asignacion.auditor
 
-            if not existe:
-                NotificacionAlerta.objects.create(
+                # El modelo no impone unicidad en la asignación; se evita duplicar
+                # la alerta aunque existan dos filas activas para el mismo usuario.
+                if usuario.id in usuarios_notificados:
+                    continue
+                usuarios_notificados.add(usuario.id)
+
+                existe = NotificacionAlerta.objects.filter(
                     accion=accion,
-                    usuario=auditor.auditor,
+                    usuario=usuario,
                     tipo_alerta=TIPO_ALERTA_VENCIMIENTO,
-                    mensaje=mensaje,
-                )
-                creadas += 1
+                ).exists()
+
+                if not existe:
+                    NotificacionAlerta.objects.create(
+                        accion=accion,
+                        usuario=usuario,
+                        tipo_alerta=TIPO_ALERTA_VENCIMIENTO,
+                        mensaje=mensaje,
+                    )
+                    creadas += 1
 
         self.stdout.write(
             self.style.SUCCESS(

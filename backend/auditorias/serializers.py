@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from usuarios.models import Usuario
 
 from .models import (
     AccionMejoramiento,
@@ -24,10 +25,39 @@ class UnidadAuditadaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class AuditoriaSerializer(serializers.ModelSerializer):
+    equipo_auditor = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Usuario.objects.filter(groups__name="Auditor"),
+        required=False,
+        write_only=True,
+    )
+
     class Meta:
         model = Auditoria
         fields = "__all__"
         read_only_fields = ["creado_por", "fecha_creacion"]
+
+    def validate_equipo_auditor(self, auditores):
+        ids = [auditor.id for auditor in auditores]
+        if len(ids) != len(set(ids)):
+            raise serializers.ValidationError("No puede asignar un auditor más de una vez.")
+        return auditores
+
+    def create(self, validated_data):
+        auditores = validated_data.pop("equipo_auditor", [])
+        auditoria = super().create(validated_data)
+
+        AuditoriaAuditor.objects.bulk_create(
+            [AuditoriaAuditor(auditoria=auditoria, auditor=auditor) for auditor in auditores]
+        )
+        return auditoria
+
+    def update(self, instance, validated_data):
+        if "equipo_auditor" in validated_data:
+            raise serializers.ValidationError(
+                {"equipo_auditor": "El equipo se administra desde sus asignaciones."}
+            )
+        return super().update(instance, validated_data)
 
 
 class AuditoriaAuditorSerializer(serializers.ModelSerializer):
