@@ -13,7 +13,7 @@ const loading = ref(true)
 const errorMsg = ref('')
 
 // Consulta no puede crear ni editar; Admin y Auditor sí.
-const puedeEscribir = auth.isAdmin || auth.isAuditor
+const puedeEscribir = auth.isAdmin || auth.isDirector || auth.isAuditor
 
 async function cargar() {
   loading.value = true
@@ -40,7 +40,7 @@ onMounted(cargar)
         <div>
           <h1>Auditorías</h1>
           <p class="sub">
-            {{ auth.isAdmin ? 'Listado completo de auditorías.' : puedeEscribir ? 'Auditorías donde usted está asignado.' : 'Listado en modo solo lectura.' }}
+            {{ auth.isAdmin || auth.isDirector ? 'Listado completo de auditorías.' : puedeEscribir ? 'Auditorías donde usted está asignado.' : 'Listado en modo solo lectura.' }}
           </p>
         </div>
         <button v-if="puedeEscribir" class="btn-primary" @click="router.push({ name: 'auditoria-nueva' })">

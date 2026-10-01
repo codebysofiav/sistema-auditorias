@@ -13,7 +13,7 @@ const auditoriasPorId = ref({})
 const loading = ref(true)
 const errorMsg = ref('')
 
-const puedeEscribir = auth.isAdmin || auth.isAuditor
+const puedeEscribir = auth.isAdmin || auth.isDirector || auth.isAuditor
 
 async function cargar() {
   loading.value = true

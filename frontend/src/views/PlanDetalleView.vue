@@ -15,7 +15,7 @@ const auditoriaCodigo = ref('')
 const loading = ref(true)
 const errorMsg = ref('')
 
-const puedeEscribir = auth.isAdmin || auth.isAuditor
+const puedeEscribir = auth.isAdmin || auth.isDirector || auth.isAuditor
 
 function alertaVencimiento(accion) {
   if (accion.estado === 'Cerrada') return ''

@@ -22,12 +22,9 @@ const router = useRouter()
 const auth = useAuthStore()
 
 const esEdicion = computed(() => !!route.params.id)
-const directorAsignado = computed(() => auth.isDirector && equipo.value.some(
-  (asignacion) => asignacion.auditor === auth.user?.id && asignacion.activo,
-))
-const puedeEditarAuditoria = computed(() => auth.isAdmin || auth.isAuditor || directorAsignado.value)
+const puedeEditarAuditoria = computed(() => auth.isAdmin || auth.isDirector || auth.isAuditor)
 const puedeDefinirEquipoAlCrear = computed(() => !esEdicion.value && puedeEditarAuditoria.value)
-const puedeGestionarEquipo = computed(() => esEdicion.value && auth.isAdmin)
+const puedeGestionarEquipo = computed(() => esEdicion.value && (auth.isAdmin || auth.isDirector))
 
 const unidades = ref([])
 const loading = ref(true)

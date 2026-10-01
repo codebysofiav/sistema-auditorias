@@ -9,15 +9,16 @@ const auth = useAuthStore()
 const resumen = ref(null)
 const loading = ref(true)
 const errorMsg = ref('')
+const tieneAccesoCompleto = computed(() => auth.isAdmin || auth.isDirector)
 
 const titulo = computed(() => {
-  if (auth.isAdmin) return 'Panel general'
+  if (tieneAccesoCompleto.value) return 'Panel general'
   if (auth.isAuditor) return 'Mis auditorías asignadas'
   return 'Auditorías'
 })
 
 const subtitulo = computed(() => {
-  if (auth.isAdmin) {
+  if (tieneAccesoCompleto.value) {
     return 'Vista consolidada del estado de las auditorías.'
   }
 
@@ -141,7 +142,7 @@ onMounted(async () => {
               </div>
             </article>
 
-            <article class="kpi-card">
+            <article v-if="tieneAccesoCompleto" class="kpi-card">
               <div class="kpi-icon">
                 U
               </div>
@@ -360,7 +361,7 @@ onMounted(async () => {
           </div>
 
           <!-- ADMINISTRACIÓN -->
-          <div v-if="auth.isAdmin" class="panel">
+          <div v-if="tieneAccesoCompleto" class="panel">
             <div class="panel-header">
               <div>
                 <span class="eyebrow">ADMINISTRACIÓN</span>
@@ -395,7 +396,7 @@ onMounted(async () => {
         <!-- MIS AUDITORÍAS -->
         <!-- ========================================= -->
         <section
-          v-if="auth.isAuditor && !auth.isAdmin"
+          v-if="auth.isAuditor && !tieneAccesoCompleto"
           class="panel my-audits"
         >
           <div class="panel-header">

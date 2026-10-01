@@ -226,7 +226,7 @@ router.beforeEach(async (to) => {
     return { name: 'dashboard' }
   }
 
-  if (to.meta.requiresWrite && !(auth.isAdmin || auth.isAuditor)) {
+  if (to.meta.requiresWrite && !(auth.isAdmin || auth.isDirector || auth.isAuditor)) {
     return { name: 'dashboard' }
   }
 

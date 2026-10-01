@@ -112,6 +112,7 @@ async function guardar() {
 
 async function agregarSeguimiento() {
   guardandoSeguimiento.value = true
+  errorMsg.value = ''
   try {
     await apiClient.post('/seguimientos/', {
       ...nuevoSeguimiento.value,
@@ -125,7 +126,12 @@ async function agregarSeguimiento() {
     nuevoSeguimiento.value = { porcentaje_avance: 0, descripcion: '', fecha_seguimiento: '', estado: ESTADOS_SEGUIMIENTO[0], observaciones: '', evidencias: '' }
     await cargarSeguimientos()
   } catch (err) {
-    errorMsg.value = 'No se pudo guardar el seguimiento.'
+    const detalle = err.response?.data
+    errorMsg.value = err.response?.status === 403
+      ? 'No tiene permiso para registrar un seguimiento en esta auditoría.'
+      : detalle && typeof detalle === 'object'
+        ? Object.entries(detalle).map(([campo, mensajes]) => `${campo}: ${Array.isArray(mensajes) ? mensajes.join(' ') : mensajes}`).join(' ')
+        : 'No se pudo guardar el seguimiento.'
   } finally {
     guardandoSeguimiento.value = false
   }
@@ -227,6 +233,10 @@ async function agregarSeguimiento() {
                 <label>% de avance</label>
                 <input v-model.number="nuevoSeguimiento.porcentaje_avance" type="number" min="0" max="100" required />
               </div>
+            </div>
+            <div class="field">
+              <label>Observaciones</label>
+              <textarea v-model="nuevoSeguimiento.observaciones" rows="2" required></textarea>
             </div>
             <div class="field">
               <label>Descripción del avance</label>

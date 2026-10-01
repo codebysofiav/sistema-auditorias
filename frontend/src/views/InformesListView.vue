@@ -13,7 +13,7 @@ const auditoriasPorId = ref({})
 const loading = ref(true)
 const errorMsg = ref('')
 
-const puedeEscribir = computed(() => auth.isAdmin || auth.isAuditor)
+const puedeEscribir = computed(() => auth.isAdmin || auth.isDirector || auth.isAuditor)
 const puedeRevisar = computed(() => auth.isAdmin || auth.isDirector)
 const revisandoId = ref(null)
 const observacionesRevision = ref('')
@@ -115,7 +115,7 @@ onMounted(cargar)
               <button class="btn-link" @click="router.push({ name: 'informe-detalle', params: { id: i.id } })">
                 {{ puedeEscribir ? 'Ver / Editar' : 'Ver' }}
               </button>
-              <template v-if="puedeRevisar && esPreliminar(i) && i.estado === 'Pendiente de revisión'">
+              <template v-if="puedeRevisar && esPreliminar(i)">
                 <button v-if="revisandoId !== i.id" class="btn-review" @click="iniciarRevision(i)">Revisar</button>
                 <div v-else class="review-form"><textarea v-model="observacionesRevision" rows="2" placeholder="Observaciones de revisión"></textarea><div><button class="btn-approve" :disabled="guardandoRevision" @click="revisar(i, 'Aprobado')">Aprobar</button><button class="btn-correct" :disabled="guardandoRevision" @click="revisar(i, 'Requiere correcciones')">Solicitar correcciones</button><button class="btn-link" :disabled="guardandoRevision" @click="cancelarRevision">Cancelar</button></div></div>
               </template>

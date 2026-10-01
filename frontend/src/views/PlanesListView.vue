@@ -13,7 +13,7 @@ const auditoriasPorId = ref({})
 const loading = ref(true)
 const errorMsg = ref('')
 
-const puedeEscribir = auth.isAdmin || auth.isAuditor
+const puedeEscribir = auth.isAdmin || auth.isDirector || auth.isAuditor
 
 async function cargar() {
   loading.value = true
@@ -45,7 +45,7 @@ onMounted(cargar)
         <div>
           <h1>Planes de mejoramiento</h1>
           <p class="sub">
-            {{ auth.isAdmin ? 'Todos los planes registrados.' : puedeEscribir ? 'Planes de sus auditorías asignadas.' : 'Listado en modo solo lectura.' }}
+            {{ auth.isAdmin || auth.isDirector ? 'Todos los planes registrados.' : puedeEscribir ? 'Planes de sus auditorías asignadas.' : 'Listado en modo solo lectura.' }}
           </p>
         </div>
         <button v-if="puedeEscribir" class="btn-primary" @click="router.push({ name: 'plan-nuevo' })">

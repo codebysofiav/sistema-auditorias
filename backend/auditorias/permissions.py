@@ -42,7 +42,7 @@ class AuditoriaRolePermission(permissions.BasePermission):
 
     - Administrador: acceso completo.
     - Auditor: lectura y escritura sobre auditorías asignadas.
-    - Director: lectura global y escritura sobre auditorías asignadas.
+    - Director: acceso completo a los recursos de auditoría.
     - Usuario consulta: solo lectura.
     """
 
@@ -57,7 +57,9 @@ class AuditoriaRolePermission(permissions.BasePermission):
         if not user or not user.is_authenticated:
             return False
 
-        if user.is_superuser or user_in_group(user, self.admin_group):
+        if user.is_superuser or user_in_group(
+            user, self.admin_group, self.director_group
+        ):
             return True
 
         if request.method in permissions.SAFE_METHODS:
@@ -65,14 +67,14 @@ class AuditoriaRolePermission(permissions.BasePermission):
                 user, self.auditor_group, self.director_group, self.consulta_group
             )
 
-        # La autorización definitiva de escritura para Director se determina
-        # por objeto, según su asignación activa a la auditoría.
-        return user_in_group(user, self.auditor_group, self.director_group)
+        return user_in_group(user, self.auditor_group)
 
     def has_object_permission(self, request, view, obj):
         user = request.user
 
-        if user.is_superuser or user_in_group(user, self.admin_group):
+        if user.is_superuser or user_in_group(
+            user, self.admin_group, self.director_group
+        ):
             return True
 
         if getattr(view, "admin_write_only", False) and request.method not in permissions.SAFE_METHODS:
@@ -80,13 +82,6 @@ class AuditoriaRolePermission(permissions.BasePermission):
 
         if user_in_group(user, self.consulta_group):
             return request.method in permissions.SAFE_METHODS
-
-        if user_in_group(user, self.director_group):
-            if request.method in permissions.SAFE_METHODS:
-                return True
-            if getattr(view, "action", None) == "revisar":
-                return True
-            return auditor_is_assigned(user, get_auditoria_from_object(obj))
 
         if user_in_group(user, self.auditor_group):
             auditoria = get_auditoria_from_object(obj)

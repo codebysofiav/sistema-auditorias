@@ -123,7 +123,9 @@ class AuditoriaAccessMixin:
     def _can_create_for_request(self):
         user = self.request.user
 
-        if user.is_superuser or user.groups.filter(name="Administrador").exists():
+        if user.is_superuser or user.groups.filter(
+            name__in=("Administrador", "Director")
+        ).exists():
             return True
 
         if self.admin_write_only:
@@ -132,16 +134,12 @@ class AuditoriaAccessMixin:
         if user.groups.filter(name="Usuario consulta").exists():
             return False
 
-        es_auditor = user.groups.filter(name="Auditor").exists()
-        es_director = user.groups.filter(name="Director").exists()
-        if not es_auditor and not es_director:
+        if not user.groups.filter(name="Auditor").exists():
             return False
 
         model = self.queryset.model
 
         if model in (Auditoria, UnidadAuditada):
-            if es_director and not es_auditor:
-                return False
             return True
 
         auditoria_id = self.request.data.get("auditoria")
@@ -228,6 +226,12 @@ class InformeViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
     serializer_class = InformeSerializer
     autor_field = "creado_por"
 
+    @staticmethod
+    def _es_revisor(user):
+        return user.is_superuser or user.groups.filter(
+            name__in=("Administrador", "Director")
+        ).exists()
+
     def update(self, request, *args, **kwargs):
         campos_revision = {
             "estado",
@@ -239,15 +243,43 @@ class InformeViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
             raise ValidationError(
                 "Los campos de revisión solo pueden cambiarse mediante la acción revisar."
             )
+
+        informe = self.get_object()
+        es_auditor = request.user.groups.filter(name="Auditor").exists()
+        if (
+            informe.tipo_informe.lower() == "preliminar"
+            and informe.estado == Informe.EstadoRevision.APROBADO
+            and es_auditor
+            and not self._es_revisor(request.user)
+        ):
+            raise PermissionDenied(
+                "Un informe preliminar aprobado no puede ser editado por el Auditor. "
+                "El Director debe solicitar correcciones para habilitar una nueva edición."
+            )
         return super().update(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        informe = serializer.instance
+        es_auditor = self.request.user.groups.filter(name="Auditor").exists()
+        if (
+            informe.tipo_informe.lower() == "preliminar"
+            and informe.estado == Informe.EstadoRevision.CORRECCIONES
+            and es_auditor
+            and not self._es_revisor(self.request.user)
+        ):
+            # La observación de la revisión anterior se conserva para el Auditor.
+            serializer.save(
+                estado=Informe.EstadoRevision.PENDIENTE,
+                revisado_por=None,
+                fecha_revision=None,
+            )
+            return
+        serializer.save()
 
     @action(detail=True, methods=["post"], url_path="revisar")
     def revisar(self, request, pk=None):
         informe = self.get_object()
-        es_revisor = request.user.is_superuser or request.user.groups.filter(
-            name__in=("Administrador", "Director")
-        ).exists()
-        if not es_revisor:
+        if not self._es_revisor(request.user):
             raise PermissionDenied("Solo un Director o Administrador puede revisar informes.")
         if informe.tipo_informe.lower() != "preliminar":
             raise ValidationError("Solo los informes preliminares pueden revisarse.")
@@ -344,10 +376,12 @@ class NotificacionAlertaViewSet(AuditoriaAccessMixin, viewsets.ModelViewSet):
         queryset = super().get_queryset()
         user = self.request.user
 
-        es_admin = user.is_superuser or user.groups.filter(name="Administrador").exists()
+        es_privilegiado = user.is_superuser or user.groups.filter(
+            name__in=("Administrador", "Director")
+        ).exists()
         es_auditor = user.groups.filter(name="Auditor").exists()
 
-        if es_auditor and not es_admin:
+        if es_auditor and not es_privilegiado:
             queryset = queryset.filter(usuario=user)
 
         return queryset
@@ -419,11 +453,13 @@ class DashboardResumenView(APIView):
             ).filter(~Exists(informe_definitivo)).count(),
         }
 
-        es_administrador = user.is_superuser or user.groups.filter(name="Administrador").exists()
+        es_administrador = user.is_superuser or user.groups.filter(
+            name__in=("Administrador", "Director")
+        ).exists()
         es_auditor = user.groups.filter(name="Auditor").exists()
 
         if es_administrador:
-            roles = ("Administrador", "Auditor", "Usuario consulta")
+            roles = ("Administrador", "Auditor", "Director", "Usuario consulta")
             conteos_roles = {
                 item["name"]: item["total"]
                 for item in Group.objects.filter(name__in=roles)

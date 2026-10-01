@@ -15,7 +15,7 @@ const equipo = ref([])
 const usuariosPorId = ref({})
 const loading = ref(true)
 const errorMsg = ref('')
-const puedeEscribir = auth.isAdmin || auth.isAuditor
+const puedeEscribir = auth.isAdmin || auth.isDirector || auth.isAuditor
 
 async function cargar() {
   loading.value = true
@@ -35,8 +35,8 @@ async function cargar() {
     const asignaciones = equipoRes.data.results ?? equipoRes.data
     equipo.value = asignaciones.filter((asignacion) => asignacion.auditoria === planData.auditoria && asignacion.activo)
 
-    if (auth.isAdmin) {
-      const { data } = await apiClient.get('/auth/usuarios/')
+    if (auth.isAdmin || auth.isDirector) {
+      const { data } = await apiClient.get('/auth/usuarios/auditores/')
       const usuarios = data.results ?? data
       usuariosPorId.value = Object.fromEntries(usuarios.map((usuario) => [usuario.id, usuario]))
     }

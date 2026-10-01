@@ -11,7 +11,7 @@ const unidades = ref([])
 const loading = ref(true)
 const errorMsg = ref('')
 const desactivandoId = ref(null)
-const puedeEscribir = auth.isAdmin || auth.isAuditor
+const puedeEscribir = auth.isAdmin || auth.isDirector || auth.isAuditor
 
 async function cargar() {
   loading.value = true
