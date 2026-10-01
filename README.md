@@ -1,6 +1,6 @@
-# Sistema de Auditorias
+# Sistema de Auditorias UIS
 
-Aplicacion web interna para la gestion de auditorias. El proyecto esta dividido en backend Django REST Framework y frontend Vue 3 + Vite.
+Aplicacion web interna para la gestion de auditorias de la Universidad Industrial de Santander (UIS). Integra un backend REST con Django y un frontend en Vue para administrar auditorias, planeacion, hallazgos, planes de mejoramiento, informes y usuarios.
 
 ## Stack
 
@@ -48,11 +48,14 @@ El backend ya cuenta con:
 - Generacion automatica de alertas de vencimiento (2 dias antes de la fecha limite de una accion de mejoramiento) y marcado automatico de acciones vencidas, via management command.
 - Documentacion automatica de API con drf-spectacular.
 - Tests de permisos en `backend/auditorias/tests/test_permissions.py` (22 pruebas).
+- Rol `Director`, con acceso completo a los recursos de auditorias y acceso restringido a la gestion de usuarios.
+- Flujo de revision de informes preliminares: Director o Administrador pueden aprobar o solicitar correcciones; un Auditor que corrige y guarda un informe observado lo reenvia automaticamente a revision.
+- Un informe definitivo solo puede crearse cuando existe un informe preliminar aprobado para la misma auditoria.
 
 El frontend ya cuenta con:
 
 - Vistas de Auditorias, Hallazgos, Informes, Documentos y Plan de mejoramiento.
-- Modulo de Usuarios (listar, crear; edicion y eliminacion agregadas — **confirmar endpoints exactos usados**, ver seccion Rutas mas abajo).
+- Modulo de Usuarios: listar, crear, editar y eliminar, disponible solo para Administrador.
 - Modulo de Planeacion (plan de auditoria, cronograma, equipo auditor).
 - Modulo de Unidades Auditadas (listar, crear, editar, desactivar).
 - Panel de alertas en el sidebar, con conteo de no leidas y opcion de marcarlas como leidas.
@@ -79,7 +82,10 @@ POST   /api/auth/logout/
 GET    /api/auth/me/
 GET    /api/auth/usuarios/
 POST   /api/auth/usuarios/crear/
-# TODO: documentar aqui las rutas de editar/eliminar usuario una vez confirmadas
+GET    /api/auth/usuarios/auditores/
+GET    /api/auth/usuarios/<id>/
+PATCH  /api/auth/usuarios/<id>/
+DELETE /api/auth/usuarios/<id>/
 ```
 
 ### auditorias
@@ -91,6 +97,7 @@ Incluye ViewSets y rutas para:
 /api/auditorias/
 /api/auditoria-auditores/
 /api/informes/
+/api/informes/<id>/revisar/             # POST: aprobar o solicitar correcciones
 /api/hallazgos/
 /api/planes-auditoria/
 /api/oportunidades-mejora/
@@ -112,6 +119,7 @@ Los permisos principales estan implementados en `auditorias/permissions.py`.
 Roles definidos:
 
 - `Administrador`: acceso completo.
+- `Director`: acceso completo a los recursos de auditorias, incluyendo la revision de informes; no puede gestionar usuarios.
 - `Auditor`: puede consultar y modificar recursos asociados a auditorias donde esta asignado; puede crear, editar y desactivar Unidades Auditadas.
 - `Usuario consulta`: solo lectura en todos los modulos.
 
@@ -119,7 +127,7 @@ Los ViewSets de `auditorias` heredan de un mixin que aplica `AuditoriaRolePermis
 
 ## Alertas de vencimiento
 
-Regla de negocio: una accion de mejoramiento genera una alerta 2 dias antes de su `fecha_limite`; si vence sin completarse, se marca automaticamente con estado `Vencida`.
+Regla de negocio: una accion de mejoramiento genera una alerta 2 dias antes de su `fecha_limite` para cada auditor activo asignado a la auditoria; si vence sin completarse, se marca automaticamente con estado `Vencida`.
 
 Se ejecuta con:
 
@@ -130,7 +138,7 @@ cd backend
 
 **Pendiente:** programar este comando para que corra a diario (Programador de tareas de Windows, o el mecanismo equivalente cuando el servidor pase a Linux/PostgreSQL). Hoy no es automatico.
 
-Nota: la alerta se asigna al primer auditor activo de la auditoria asociada, porque `AccionMejoramiento` no tiene un campo de responsable directo. Revisar si conviene notificar a todos los auditores activos en vez de solo al primero.
+La proteccion contra duplicados se aplica por combinacion de accion, usuario y tipo de alerta. Por tanto, cada auditor activo recibe una alerta propia sin duplicar alertas en ejecuciones posteriores.
 
 ## Documentacion de API
 
@@ -215,17 +223,19 @@ cd frontend
 npm run build
 ```
 
-## Pendiente (en este orden)
+## Pendiente antes del despliegue
 
-1. **Gestion documental**: modelo de plantillas institucionales, variables dinamicas, motor de generacion de documentos (Word/PDF/Excel), y la regla de que el informe definitivo solo puede generarse despues de revisar el preliminar.
-2. **PostgreSQL**: migrar la base de datos de desarrollo (SQLite) a PostgreSQL en el servidor.
-3. **Interfaz**: mejoras de diseño general y barra de estados visual para las auditorias (hoy `estado` es texto libre, sin `choices` definidos en el modelo).
+1. Realizar la seccion del backend para la generacion de documentos con las plantillas institucionales.
+2. Revisar que todas las variables utilizadas en los formularios se encuentren correctamente representadas y persistidas en la base de datos.
+3. Realizar una revision integral de seguridad de la aplicacion.
+4. Montar y configurar la base de datos compartida en el servidor con PostgreSQL.
+5. Revisar y configurar que la aplicacion solo pueda abrirse desde la red interna de la Universidad.
+6. Consultar con la Universidad si es posible vincular el correo institucional al inicio de sesion para habilitar recuperacion de contrasena por correo, sin depender de un usuario Administrador.
 
 ## Notas de Desarrollo
 
-- La configuracion actual permite CORS desde `http://localhost:5173`.
+- La configuracion actual permite CORS desde `http://localhost:5173` para desarrollo.
 - La autenticacion global de DRF usa JWT.
 - El permiso global es `IsAuthenticated`; los ViewSets de auditorias aplican permisos especificos por rol y asignacion.
 - No se debe exponer `password` ni hashes de contrasena en serializers de lectura.
-- Los campos `estado` de `Auditoria` y `AccionMejoramiento` son texto libre (sin `choices` en el modelo); conviene formalizarlos al abordar la barra de estados.
 - La base de datos configurada actualmente es SQLite; PostgreSQL sigue siendo el objetivo definido para despliegue o una etapa posterior.
